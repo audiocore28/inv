@@ -1,5 +1,13 @@
+<script setup> 
+import MobileNav from '@/components/MobileNav.vue';
+</script>
+
 <template>
-   <h1 class="text-3xl text-green-500 font-bold uppercase">
-    Hello world!
-  </h1>
+  <div class="bg-slate-900">
+    <div class="max-w-screen-2xl mx-auto p-5 sm:p-10 md:p-16 2xl:p-28">
+      <RouterView />
+    </div>
+
+    <MobileNav />
+  </div>
 </template>
