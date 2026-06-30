@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia';
 import { useDiskStore } from '../stores/disk';
 import { formatSize } from '../utils/format';
+import CopyToClipboard from '@/components/CopyToClipboard.vue';
 
 const diskStore = useDiskStore();
 
@@ -14,7 +15,18 @@ const { filteredDisks } = storeToRefs(diskStore);
     <div v-for="disk in filteredDisks" href="#" class=" relative bg-slate-700 flex-grow text-slate-300 border-l-5 border-green-600 rounded-l-md w-full md:w-5/12 lg:w-3/12">
       <h1 class="font-oswald font-bold text-md capitalize m-2">{{ `${disk.brand} ${disk.model} ${formatSize(disk.capacity)}` }}</h1>
 
-
+      <div class="absolute top-1 right-2 flex flex-col items-end">
+        <CopyToClipboard v-slot="{ status, copy }">
+          <button
+            @click="copy(disk)"
+            :disabled="status === 'copied'"
+            class="cursor-pointer"
+          >
+            <svg class="w-4 h-4" fill="currentColor" width="64px" height="64px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" transform="rotate(270)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M21,8H9A1,1,0,0,0,8,9V21a1,1,0,0,0,1,1H21a1,1,0,0,0,1-1V9A1,1,0,0,0,21,8ZM20,20H10V10H20ZM6,15a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V3A1,1,0,0,1,3,2H15a1,1,0,0,1,1,1V5a1,1,0,0,1-2,0V4H4V14H5A1,1,0,0,1,6,15Z"></path></g></svg>
+          </button>
+          <small v-if="status === 'copied'" class="mt-1 text-xs font-inter text-green-600">Copied!</small>
+        </CopyToClipboard>
+      </div>
 
       <div class="flex bg-slate-500 text-slate-300">
         <span class="inline-flex items-center gap-2 px-2 py-2 text-sm font-medium rounded-md transition-colors duration-200">
