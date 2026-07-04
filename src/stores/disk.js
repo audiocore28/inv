@@ -41,16 +41,25 @@ export const useDiskStore = defineStore('disk', () => {
 
   const capacities = computed(() => {
 
-    const allCapacities = disks.value.reduce((accumulator, currentDisk) => {
-      const cap = currentDisk.capacity;
-      return [...accumulator, cap];
-    }, []);
+    // Get all capacities from disks
+    const allCapacities = disks.value.map(disk => disk.capacity);
 
-    return [...new Set(allCapacities)]
-      .sort((a, b) => a - b);
+    // Get unique capacities and their counts
+    const capacityCounts = allCapacities.reduce((acc, cap) => {
+      acc[cap] = (acc[cap] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Convert the counts object into an array of objects with capacity and count
+    const uniqueCapacities = Object.entries(capacityCounts).map(([cap, count]) => ({
+      cap: parseInt(cap, 10),
+      count
+    }));
+
+    // Sort the unique capacities in descending order
+    return uniqueCapacities.sort((a, b) => b.cap - a.cap);
 
   });
-
 
   // Styles
 
