@@ -1,5 +1,6 @@
 import { ref, reactive, shallowRef, computed, onMounted } from 'vue';
 import { defineStore } from 'pinia';
+import { formatSize } from '../utils/format';
 
 export const useDiskStore = defineStore('disk', () => {
 
@@ -62,7 +63,19 @@ export const useDiskStore = defineStore('disk', () => {
       const data = await response.json();
       disks.value = data.map(disk => ({
         ...disk,
-        category: 'hdd'
+        category: 'hdd',
+        text: `
+${formatSize(disk.capacity)} HDD ${disk.form} inch ${disk.brand} ${disk.model} ${disk.health}% health
+
+${formatSize(disk.capacity)} Hard Disk Drive / HDD
+${disk.form} inch 
+${disk.brand} ${disk.model}
+${disk.rpm}rpm
+${disk.health}% health
+${disk.year}
+
+For Laptop / External Storage
+        `,
       }));
     } catch (error) {
       console.error('Error fetching disks', error);

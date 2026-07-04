@@ -24,7 +24,7 @@ const props = defineProps({
     <div class="absolute top-1 right-2 flex flex-col items-end text-slate-600">
       <CopyToClipboard v-slot="{ status, copy }">
         <button
-          @click="copy(item)"
+          @click="copy(item.text)"
           :disabled="status === 'copied'"
           class="cursor-pointer"
           >

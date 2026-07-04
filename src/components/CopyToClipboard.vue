@@ -1,21 +1,9 @@
 <script setup>
 import { ref } from 'vue';
-import { formatSize } from '../utils/format';
 
 const status = ref('idle');
 
-function copy(disk) {
-  const text = `
-${formatSize(disk.capacity)} HDD ${disk.form} inch ${disk.brand} ${disk.model} ${disk.health}% health \n
-${formatSize(disk.capacity)} Hard Disk Drive / HDD
-${disk.form} inch 
-${disk.brand} ${disk.model}
-${disk.rpm}rpm
-${disk.health}% health
-${disk.year} \n
-For Laptop / External Storage
-  `;
-
+function copy(text) {
   // create textarea
   const el = document.createElement('textarea');
 
