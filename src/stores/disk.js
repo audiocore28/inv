@@ -60,7 +60,10 @@ export const useDiskStore = defineStore('disk', () => {
     try {
       const response = await fetch(GOOGLE_SCRIPT_URL); 
       const data = await response.json();
-      disks.value = data;
+      disks.value = data.map(disk => ({
+        ...disk,
+        category: 'hdd'
+      }));
     } catch (error) {
       console.error('Error fetching disks', error);
     }
