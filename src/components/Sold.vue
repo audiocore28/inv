@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia';
 import { useSoldStore } from '../stores/sold';
 import HardDriveDetail from '@/components/HardDriveDetail.vue';
 import MemoryDetail from './MemoryDetail.vue';
+import SolidDetail from './SolidDetail.vue';
 
 const soldStore = useSoldStore();
 const { sold } = storeToRefs(soldStore);
@@ -10,6 +11,7 @@ const { sold } = storeToRefs(soldStore);
 const componentMap = {
   hdd: HardDriveDetail,
   ram: MemoryDetail,
+  ssd: SolidDetail,
 };
 </script>
 
