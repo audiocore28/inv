@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import HardDriveView from '../views/HardDriveView.vue'
+import MemoryView from '../views/MemoryView.vue'
 import SoldView from '../views/SoldView.vue'
 
 const router = createRouter({
@@ -10,6 +11,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+    },
+    {
+      path: '/ram',
+      name: 'ram',
+      component: MemoryView,
     },
     {
       path: '/hdd',
