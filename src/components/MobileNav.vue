@@ -2,11 +2,11 @@
   <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-32px)] max-w-lg">
     <div class="flex justify-between items-center p-3 bg-slate-700 backdrop-blur-lg rounded-2xl shadow-lg border border-slate-600">
       
-      <!-- Processor -->
-      <button class="flex flex-col items-center justify-center p-2 group">
-        <svg fill="currentColor" class="w-6 h-6 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" width="64px" height="64px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M14.25,8H9.75A1.752,1.752,0,0,0,8,9.75v4.5A1.752,1.752,0,0,0,9.75,16h4.5A1.752,1.752,0,0,0,16,14.25V9.75A1.752,1.752,0,0,0,14.25,8ZM14,14H10V10h4Zm8-5a1,1,0,0,0,0-2H20V6.75A2.752,2.752,0,0,0,17.25,4H17V2a1,1,0,0,0-2,0V4H13V2a1,1,0,0,0-2,0V4H9V2A1,1,0,0,0,7,2V4H6.75A2.752,2.752,0,0,0,4,6.75V7H2A1,1,0,0,0,2,9H4v2H2a1,1,0,0,0,0,2H4v2H2a1,1,0,0,0,0,2H4v.25A2.752,2.752,0,0,0,6.75,20H7v2a1,1,0,0,0,2,0V20h2v2a1,1,0,0,0,2,0V20h2v2a1,1,0,0,0,2,0V20h.25A2.752,2.752,0,0,0,20,17.25V17h2a1,1,0,0,0,0-2H20V13h2a1,1,0,0,0,0-2H20V9Zm-4,8.25a.751.751,0,0,1-.75.75H6.75A.751.751,0,0,1,6,17.25V6.75A.751.751,0,0,1,6.75,6h10.5a.751.751,0,0,1,.75.75Z"></path></g></svg>
-        <span class="text-[10px] mt-1 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">CPU</span>
-      </button>
+      <!-- Home -->
+      <RouterLink to="/" class="flex flex-col items-center justify-center p-2 group">
+        <svg class="w-6 h-6 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" width="64px" height="64px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M21.4498 10.275L11.9998 3.1875L2.5498 10.275L2.9998 11.625H3.7498V20.25H20.2498V11.625H20.9998L21.4498 10.275ZM5.2498 18.75V10.125L11.9998 5.0625L18.7498 10.125V18.75H14.9999V14.3333L14.2499 13.5833H9.74988L8.99988 14.3333V18.75H5.2498ZM10.4999 18.75H13.4999V15.0833H10.4999V18.75Z" fill="currentColor"></path> </g></svg>
+        <span class="text-[10px] mt-1 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">HOME</span>
+      </RouterLink>
 
       <!-- Memory-->
       <RouterLink to="/ram" class="flex flex-col items-center justify-center p-2 group">
