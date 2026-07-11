@@ -12,15 +12,12 @@ export const useSolidStore = defineStore('solid', () => {
   const sortBy = ref('Capacity Desc');
 
   // --- Getters ---------------------------------------------
+  const availableSolids = computed(() => solids.value.filter(s => s.available));
 
   const filteredSolids = computed(() => {
     let filtered = [];
 
-    if (capacity.value !== 'all') {
-      filtered = solids.value.filter(d => d.capacity === capacity.value);
-    } else {
-      filtered = solids.value;
-    }
+    filtered = availableSolids.value.filter(a => capacity.value === 'all' || a.capacity === parseInt(capacity.value));
 
     switch (sortBy.value) {
       case 'Recently Added':
@@ -42,7 +39,7 @@ export const useSolidStore = defineStore('solid', () => {
   const capacities = computed(() => {
 
     // Get all capacities from solids
-    const allCapacities = solids.value.map(solid => solid.capacity);
+    const allCapacities = availableSolids.value.map(solid => solid.capacity);
 
     // Get unique capacities and their counts
     const capacityCounts = allCapacities.reduce((acc, cap) => {
@@ -94,7 +91,7 @@ ${solid.health}% health
     // state
     solids, capacity, sortBy,
     // getters
-    filteredSolids, capacities
+    availableSolids, filteredSolids, capacities
     // actions
   }
 

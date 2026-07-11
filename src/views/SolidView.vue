@@ -8,7 +8,7 @@ import Sort from '@/components/Sort.vue';
 
 const solidStore = useSolidStore();
 
-const { solids, filteredSolids, sortBy, capacity, capacities } = storeToRefs(solidStore);
+const { availableSolids, filteredSolids, sortBy, capacity, capacities } = storeToRefs(solidStore);
 
 const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Capacity Asc', 'Capacity Desc']);
 </script>
@@ -17,7 +17,7 @@ const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Capacity Asc', 'Capacity De
   <div>
     <div class="bg-slate-900 sticky top-0 w-full z-[200]">
       <div class="max-w-screen-2xl mx-auto px-5 sm:px-10 md:px-16 2xl:px-28">
-        <Group :count="solids.length" :groups="capacities" :group="capacity" @changeGroup="capacity = $event" />
+        <Group :count="availableSolids.length" :groups="capacities" :group="capacity" @changeGroup="capacity = $event" />
       </div>
     </div>
 

@@ -20,7 +20,9 @@ export const useSoldStore = defineStore('sold', () => {
       sold.value.splice(index, 1);
 
     } else {
-      sold.value.unshift(p);
+      if (p.available) {
+        sold.value.unshift(p);
+      }
     }
   }
 

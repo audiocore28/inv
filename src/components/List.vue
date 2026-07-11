@@ -24,7 +24,7 @@ const componentMap = {
 
 <template>
   <div class="bg-slate-900 flex flex-wrap gap-4 justify-center">
-    <div class="relative bg-slate-700 flex-grow text-slate-300 w-full md:w-5/12 lg:w-3/12"
+    <div class="relative bg-slate-800/70 rounded-lg p-1 flex-grow text-slate-300 w-full md:w-5/12 lg:w-3/12"
       v-for="item in items" 
       v-show="!sold.some(s => s.id === item.id)"
     >

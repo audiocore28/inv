@@ -12,15 +12,12 @@ export const useMemoryStore = defineStore('memory', () => {
   const sortBy = ref('Capacity Desc');
 
   // --- Getters ---------------------------------------------
+  const availableMemories = computed(() => memories.value.filter(m => m.available));
 
   const filteredMemories = computed(() => {
     let filtered = [];
 
-    if (capacity.value !== 'all') {
-      filtered = memories.value.filter(d => d.capacity === capacity.value);
-    } else {
-      filtered = memories.value;
-    }
+    filtered = availableMemories.value.filter(a => capacity.value === 'all' || a.capacity === parseInt(capacity.value));
 
     switch (sortBy.value) {
       case 'Recently Added':
@@ -42,7 +39,7 @@ export const useMemoryStore = defineStore('memory', () => {
   const capacities = computed(() => {
 
     // Get all capacities from memories
-    const allCapacities = memories.value.map(memory => memory.capacity);
+    const allCapacities = availableMemories.value.map(memory => memory.capacity);
 
     // Get unique capacities and their counts
     const capacityCounts = allCapacities.reduce((acc, cap) => {
@@ -85,7 +82,7 @@ export const useMemoryStore = defineStore('memory', () => {
     // state
     memories, capacity, sortBy,
     // getters
-    filteredMemories, capacities
+    availableMemories, filteredMemories, capacities
     // actions
   }
 

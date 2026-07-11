@@ -12,15 +12,12 @@ export const useDiskStore = defineStore('disk', () => {
   const sortBy = ref('Capacity Desc');
 
   // --- Getters ---------------------------------------------
+  const availableDisks = computed(() => disks.value.filter(d => d.available));
 
   const filteredDisks = computed(() => {
     let filtered = [];
 
-    if (capacity.value !== 'all') {
-      filtered = disks.value.filter(d => d.capacity === capacity.value);
-    } else {
-      filtered = disks.value;
-    }
+    filtered = availableDisks.value.filter(a => capacity.value === 'all' || a.capacity === parseInt(capacity.value));
 
     switch (sortBy.value) {
       case 'Recently Added':
@@ -42,7 +39,7 @@ export const useDiskStore = defineStore('disk', () => {
   const capacities = computed(() => {
 
     // Get all capacities from disks
-    const allCapacities = disks.value.map(disk => disk.capacity);
+    const allCapacities = availableDisks.value.map(disk => disk.capacity);
 
     // Get unique capacities and their counts
     const capacityCounts = allCapacities.reduce((acc, cap) => {
@@ -96,7 +93,7 @@ For Laptop / External Storage
     // state
     disks, capacity, sortBy,
     // getters
-    filteredDisks, capacities
+    availableDisks, filteredDisks, capacities
     // actions
   }
 
