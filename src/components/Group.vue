@@ -16,6 +16,9 @@ const props = defineProps({
     type: [String, Number],
     default: 'all',
   },
+  groupBy: {
+    type: String,
+  },
 });
 </script>
 
@@ -40,6 +43,26 @@ const props = defineProps({
     </div>
 
     <div 
+      v-if="groupBy === 'brand'"
+      v-for="g in groups"
+      @click.prevent="emit('changeGroup', g.brand)" 
+      :ref="(el) => { if (group === g.brand) el?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }) }"
+      class="text-slate-300 rounded-lg text-xs transition-all whitespace-nowrap font-inter capitalize cursor-pointer"
+      :class="{
+        'bg-slate-700' : group === g.brand,
+        'bg-slate-800/70' : group !== g.brand,
+      }"
+    >
+      <div>
+        <p class="px-4 pt-2 text-gray-500 text-xs">{{ g.brand }}</p>
+        <div class="px-4 min-w-[80px] h-[80px] flex justify-center items-center">
+          <h3 class="text-3xl font-bold font-oswald mt-1 text-400">{{ g.count }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div 
+      v-else
       v-for="g in groups"
       @click.prevent="emit('changeGroup', g.cap)" 
       :ref="(el) => { if (group === g.cap) el?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }) }"

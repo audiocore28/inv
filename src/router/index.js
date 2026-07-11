@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import MicroView from '../views/MicroView.vue'
 import HardDriveView from '../views/HardDriveView.vue'
 import MemoryView from '../views/MemoryView.vue'
 import SolidView from '../views/SolidView.vue'
@@ -12,6 +13,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+    },
+    {
+      path: '/pc',
+      name: 'pc',
+      component: MicroView,
     },
     {
       path: '/ram',

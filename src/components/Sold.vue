@@ -1,20 +1,24 @@
 <script setup>
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
+import { useMicroStore } from '../stores/micro';
 import { useMemoryStore } from '../stores/memory';
 import { useSolidStore } from '../stores/solid';
 import { useDiskStore } from '../stores/disk';
 import { useSoldStore } from '../stores/sold';
 import { formattedAmount } from '../utils/format';
+import MicroDetail from './MicroDetail.vue';
 import HardDriveDetail from '@/components/HardDriveDetail.vue';
 import MemoryDetail from './MemoryDetail.vue';
 import SolidDetail from './SolidDetail.vue';
 
+const microStore = useMicroStore();
 const memoryStore = useMemoryStore();
 const solidStore = useSolidStore();
 const diskStore = useDiskStore();
 const soldStore = useSoldStore();
 
+const { soldMicros } = storeToRefs(microStore);
 const { memories } = storeToRefs(memoryStore);
 const { solids } = storeToRefs(solidStore);
 const { disks } = storeToRefs(diskStore);
@@ -23,6 +27,7 @@ const { sold } = storeToRefs(soldStore);
 const monthlyAggregates = computed(() => {
 
   const soldItems = [
+    ...soldMicros.value.filter(item => !item.available),
     ...memories.value.filter(item => !item.available),
     ...solids.value.filter(item => !item.available),
     ...disks.value.filter(item => !item.available),
@@ -50,6 +55,7 @@ const componentMap = {
   hdd: HardDriveDetail,
   ram: MemoryDetail,
   ssd: SolidDetail,
+  micro: MicroDetail,
 };
 </script>
 

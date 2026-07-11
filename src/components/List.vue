@@ -1,6 +1,7 @@
 <script setup>
 import { storeToRefs } from 'pinia';
 import { useSoldStore } from '../stores/sold';
+import MicroDetail from '@/components/MicroDetail.vue';
 import HardDriveDetail from '@/components/HardDriveDetail.vue';
 import MemoryDetail from '@/components/MemoryDetail.vue';
 import SolidDetail from './SolidDetail.vue';
@@ -16,6 +17,7 @@ const props = defineProps({
 });
 
 const componentMap = {
+  micro: MicroDetail,
   hdd: HardDriveDetail,
   ram: MemoryDetail,
   ssd: SolidDetail,
