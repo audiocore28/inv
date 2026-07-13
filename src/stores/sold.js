@@ -1,8 +1,14 @@
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
+import { useMicroStore } from '../stores/micro';
+import { useMemoryStore } from '../stores/memory';
+import { useSolidStore } from '../stores/solid';
 import { useDiskStore } from '../stores/disk';
 
 export const useSoldStore = defineStore('sold', () => {
+  const microStore = useMicroStore();
+  const memoryStore = useMemoryStore();
+  const solidStore = useSolidStore();
   const diskStore = useDiskStore();
 
   // --- State ---------------------------------------------
@@ -10,6 +16,33 @@ export const useSoldStore = defineStore('sold', () => {
   const sold = ref([]);
 
   // --- Getters ---------------------------------------------
+
+  const monthlyAggregates = computed(() => {
+
+    const soldItems = [
+      ...microStore.soldMicros,
+      ...memoryStore.memories.filter(item => !item.available),
+      ...solidStore.solids.filter(item => !item.available),
+      ...diskStore.disks.filter(item => !item.available),
+    ].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    return soldItems.reduce((acc, sale) => {
+      const month = new Date(sale.date).toLocaleString("en-PH", { month: "long", year: "numeric" });
+
+      if (!acc[month]) {
+        acc[month] = {
+          totalSales: 0,
+          items: []
+        }
+      }
+
+      // Accumulate sales and items
+      acc[month].totalSales += sale.profit;
+      acc[month].items.push(sale);
+
+      return acc;
+    }, {});
+  });
 
   // --- Actions ---------------------------------------------
 
@@ -30,7 +63,7 @@ export const useSoldStore = defineStore('sold', () => {
     // state
     sold,
     //getters
-
+    monthlyAggregates,
     // actions
     toggleSold
   }

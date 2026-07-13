@@ -1,10 +1,5 @@
 <script setup>
-import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useMicroStore } from '../stores/micro';
-import { useMemoryStore } from '../stores/memory';
-import { useSolidStore } from '../stores/solid';
-import { useDiskStore } from '../stores/disk';
 import { useSoldStore } from '../stores/sold';
 import { formattedAmount } from '../utils/format';
 import MicroDetail from './MicroDetail.vue';
@@ -12,44 +7,9 @@ import HardDriveDetail from '@/components/HardDriveDetail.vue';
 import MemoryDetail from './MemoryDetail.vue';
 import SolidDetail from './SolidDetail.vue';
 
-const microStore = useMicroStore();
-const memoryStore = useMemoryStore();
-const solidStore = useSolidStore();
-const diskStore = useDiskStore();
 const soldStore = useSoldStore();
 
-const { soldMicros } = storeToRefs(microStore);
-const { memories } = storeToRefs(memoryStore);
-const { solids } = storeToRefs(solidStore);
-const { disks } = storeToRefs(diskStore);
-const { sold } = storeToRefs(soldStore);
-
-const monthlyAggregates = computed(() => {
-
-  const soldItems = [
-    ...soldMicros.value.filter(item => !item.available),
-    ...memories.value.filter(item => !item.available),
-    ...solids.value.filter(item => !item.available),
-    ...disks.value.filter(item => !item.available),
-  ].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-  return soldItems.reduce((acc, sale) => {
-    const month = new Date(sale.date).toLocaleString("en-PH", { month: "long", year: "numeric" });
-
-    if (!acc[month]) {
-      acc[month] = {
-        totalSales: 0,
-        items: []
-      }
-    }
-
-    // Accumulate sales and items
-    acc[month].totalSales += sale.profit;
-    acc[month].items.push(sale);
-
-    return acc;
-  }, {});
-});
+const { sold, monthlyAggregates } = storeToRefs(soldStore);
 
 const componentMap = {
   hdd: HardDriveDetail,
