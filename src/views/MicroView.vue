@@ -17,7 +17,7 @@ const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Brand (Z-A)']);
   <div>
     <div class="bg-slate-900 sticky top-0 w-full z-[200]">
       <div class="max-w-screen-2xl mx-auto px-5 sm:px-10 md:px-16 2xl:px-28">
-        <Group :count="availableMicros.length" :groups="brands" :group="brand" @changeGroup="brand = $event" :groupBy="'brand'"/>
+        <Group :count="availableMicros.length" :groups="brands" :group="brand" @changeGroup="brand = $event" :groupBy="'brand'" :category="'micro'"/>
       </div>
     </div>
 

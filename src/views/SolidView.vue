@@ -17,7 +17,7 @@ const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Capacity Asc', 'Capacity De
   <div>
     <div class="bg-slate-900 sticky top-0 w-full z-[200]">
       <div class="max-w-screen-2xl mx-auto px-5 sm:px-10 md:px-16 2xl:px-28">
-        <Group :count="availableSolids.length" :groups="capacities" :group="capacity" @changeGroup="capacity = $event" />
+        <Group :count="availableSolids.length" :groups="capacities" :group="capacity" @changeGroup="capacity = $event" :category="'ssd'" />
       </div>
     </div>
 

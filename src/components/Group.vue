@@ -19,11 +19,14 @@ const props = defineProps({
   groupBy: {
     type: String,
   },
+  category: {
+    type: String,
+  },
 });
 </script>
 
 <template>
-  <div class="flex gap-1.5 overflow-x-auto scrollbar-hide lg:flex-wrap lg:overflow-visible pt-3 -mx-1 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+  <div class="font-semibold flex gap-1.5 overflow-x-auto scrollbar-hide lg:flex-wrap lg:overflow-visible pt-3 -mx-1 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
 
     <div 
       :ref="(all) => { if (group === 'all') all?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }) }"
@@ -35,7 +38,17 @@ const props = defineProps({
       }"
     >
       <div>
-        <p class="px-4 pt-2 text-gray-500 text-xs">all</p>
+        <p 
+          class="px-4 pt-2 text-gray-500 text-xs"
+          :class="{
+            'text-white' : group === 'all' && category === 'micro',
+            'text-green-500' : group === 'all' && category === 'ram',
+            'text-yellow-500' : group === 'all' && category === 'ssd',
+            'text-orange-500' : group === 'all' && category === 'hdd',
+          }"
+        >
+          all
+        </p>
         <div class="px-4 min-w-[80px] h-[80px] flex justify-center items-center">
           <h3 class="text-3xl font-bold font-oswald mt-1 text-400">{{ count }}</h3>
         </div>
@@ -54,7 +67,16 @@ const props = defineProps({
       }"
     >
       <div>
-        <p class="px-4 pt-2 text-gray-500 text-xs">{{ g.brand }}</p>
+        <p 
+          class="px-4 pt-2 text-gray-500 text-xs"
+          :class="{
+            'text-sky-600' : group === g.brand && g.brand === 'Dell' && category === 'micro',
+            'text-rose-500' : group === g.brand && g.brand === 'Lenovo' && category === 'micro',
+            'text-gray-500' : group === g.brand && g.brand === 'HP' && category === 'micro',
+          }"
+        >
+          {{ g.brand }}
+        </p>
         <div class="px-4 min-w-[80px] h-[80px] flex justify-center items-center">
           <h3 class="text-3xl font-bold font-oswald mt-1 text-400">{{ g.count }}</h3>
         </div>
@@ -73,7 +95,16 @@ const props = defineProps({
       }"
     >
       <div>
-        <p class="px-4 pt-2 text-gray-500 text-xs">{{ formatSize(g.cap) }}</p>
+        <p 
+          class="px-4 pt-2 text-gray-500 text-xs"
+          :class="{
+            'text-green-500' : group === g.cap && category === 'ram',
+            'text-yellow-500' : group === g.cap && category === 'ssd',
+            'text-orange-500' : group === g.cap && category === 'hdd',
+          }"
+        >
+          {{ formatSize(g.cap) }}
+        </p>
         <div class="px-4 min-w-[80px] h-[80px] flex justify-center items-center">
           <h3 class="text-3xl font-bold font-oswald mt-1 text-400">{{ g.count }}</h3>
         </div>

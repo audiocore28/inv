@@ -17,7 +17,7 @@ const props = defineProps({
   <div 
     class="border border-1 rounded-lg"
     :class="{
-      'border-blue-800' : item.brand === 'Dell',
+      'border-sky-800' : item.brand === 'Dell',
       'border-red-800' : item.brand === 'Lenovo',
       'border-gray-500' : item.brand === 'HP',
     }"
@@ -25,9 +25,9 @@ const props = defineProps({
     <div class="flex justify-between items-center p-2">
       <h1 class="font-oswald font-semibold text-md capitalize pb-1">
         <span 
-          class="uppercase text-blue-500"
+          class="uppercase"
           :class="{
-            'text-blue-700' : item.brand === 'Dell',
+            'text-sky-500' : item.brand === 'Dell',
             'text-red-600' : item.brand === 'Lenovo',
             'text-gray-500' : item.brand === 'HP',
           }"
