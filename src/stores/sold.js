@@ -14,6 +14,7 @@ export const useSoldStore = defineStore('sold', () => {
   // --- State ---------------------------------------------
 
   const sold = ref([]);
+  const quota = ref(5000);
 
   // --- Getters ---------------------------------------------
 
@@ -26,7 +27,7 @@ export const useSoldStore = defineStore('sold', () => {
       ...diskStore.disks.filter(item => !item.available),
     ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    return soldItems.reduce((acc, sale) => {
+    const monthlySales = soldItems.reduce((acc, sale) => {
       const month = new Date(sale.date).toLocaleString("en-PH", { month: "long", year: "numeric" });
 
       if (!acc[month]) {
@@ -42,6 +43,30 @@ export const useSoldStore = defineStore('sold', () => {
 
       return acc;
     }, {});
+
+    const mapped = Object.keys(monthlySales).map(month => {
+      const data = monthlySales[month];
+      const percentage = (data.totalSales / quota.value) * 100;
+
+      let percentageColor;
+      if (percentage >= 75) {
+        percentageColor = '#16a34a';
+      } else if (percentage >= 50) {
+        percentageColor = '#eab308';
+      } else {
+        percentageColor = '#ef4444';
+      }
+
+      return {
+        month,
+        totalSales: data.totalSales,
+        items: data.items,
+        percentageWidth: `${percentage}%`,
+        percentageColor
+      };
+    });
+
+    return mapped;
   });
 
   // --- Actions ---------------------------------------------

@@ -39,9 +39,9 @@ const componentMap = {
 
     <h2 class="text-slate-400 font-semibold font-oswald text-sm uppercase mt-4">Records</h2>
 
-    <div v-for="(record, month) in monthlyAggregates" class="my-8">
+    <div v-for="record in monthlyAggregates" class="my-8">
       <div class="flex justify-between items-center mb-3">
-        <h2 class="text-slate-400 text-xs font-inter font-normal">{{ month }}</h2>
+        <h2 class="text-slate-400 text-xs font-inter font-normal">{{ record.month }}</h2>
 
         <div class="flex justify-between items-center">
           <span class="text-slate-400 text-xs font-inter font-semibold mr-1">{{ formattedAmount(record.totalSales) }}</span>
@@ -49,6 +49,10 @@ const componentMap = {
             {{ record.items.length }}
           </span>
         </div>
+      </div>
+
+      <div class="flex h-1 bg-slate-400 shadow-inner mb-4 rounded-lg">
+        <div :style="{ backgroundColor: record.percentageColor, width: record.percentageWidth, transition: `width 0.5s ease, background-color 0.5s ease` }" class="rounded-lg"></div>
       </div>
 
       <div class="bg-slate-900 flex flex-wrap gap-4 justify-center">
