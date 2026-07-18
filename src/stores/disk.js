@@ -1,18 +1,19 @@
-import { ref, reactive, shallowRef, computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { defineStore } from 'pinia';
-import { formatSize } from '../utils/format';
+import { useRepo } from 'pinia-orm';
+import Disk from '../models/Disk';
 
 export const useDiskStore = defineStore('disk', () => {
+  const diskRepo = useRepo(Disk);
 
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzks1OV1xR1zmmmSPtOOqmfadH6JpHOskbDErOpFLWM3bz-EqLIDxiypayVZPMwV5Yv/exec';
 
   // --- State ---------------------------------------------
-  const disks = shallowRef([]);
   const capacity = ref('all');
   const sortBy = ref('Capacity Desc');
 
   // --- Getters ---------------------------------------------
-  const availableDisks = computed(() => disks.value.filter(d => d.available));
+  const availableDisks = computed(() => diskRepo.query().where('available', true).withAll().get());
 
   const filteredDisks = computed(() => {
     let filtered = [];
@@ -67,22 +68,7 @@ export const useDiskStore = defineStore('disk', () => {
     try {
       const response = await fetch(GOOGLE_SCRIPT_URL); 
       const data = await response.json();
-      disks.value = data.map(disk => ({
-        ...disk,
-        category: 'hdd',
-        text: `
-${formatSize(disk.capacity)} HDD ${disk.form} inch ${disk.brand} ${disk.model} ${disk.health}% health
-
-${formatSize(disk.capacity)} Hard Disk Drive / HDD
-${disk.form} inch 
-${disk.brand} ${disk.model}
-${disk.rpm}rpm
-${disk.health}% health
-${disk.year}
-
-For Laptop / External Storage
-        `,
-      }));
+      diskRepo.save(data);
     } catch (error) {
       console.error('Error fetching disks', error);
     }
@@ -91,7 +77,7 @@ For Laptop / External Storage
 
   return {
     // state
-    disks, capacity, sortBy,
+    capacity, sortBy,
     // getters
     availableDisks, filteredDisks, capacities
     // actions
@@ -99,6 +85,6 @@ For Laptop / External Storage
 
 }, {
   persist: {
-    pick: ['disks', 'filteredDisks', 'capacity'] // Specify only the fields you want to save to localStorage
+    pick: ['filteredDisks', 'capacity'] // Specify only the fields you want to save to localStorage
   }
 });

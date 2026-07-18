@@ -1,18 +1,19 @@
-import { ref, reactive, shallowRef, computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { defineStore } from 'pinia';
-import { formatSize } from '../utils/format';
+import { useRepo } from 'pinia-orm';
+import Memory from '../models/Memory';
 
 export const useMemoryStore = defineStore('memory', () => {
+  const memoryRepo = useRepo(Memory);
 
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNweKRoVSB-Fy9ll1mJDDwx5oF_1oEhdCC-_JQO5bH-OE3DoB0Hq8SThYPVM0N9NkF/exec';
 
   // --- State ---------------------------------------------
-  const memories = shallowRef([]);
   const capacity = ref('all');
   const sortBy = ref('Capacity Desc');
 
   // --- Getters ---------------------------------------------
-  const availableMemories = computed(() => memories.value.filter(m => m.available));
+  const availableMemories = computed(() => memoryRepo.query().where('available', true).withAll().get());
 
   const filteredMemories = computed(() => {
     let filtered = [];
@@ -67,11 +68,7 @@ export const useMemoryStore = defineStore('memory', () => {
     try {
       const response = await fetch(GOOGLE_SCRIPT_URL); 
       const data = await response.json();
-      memories.value = data.map(memory => ({
-        ...memory,
-        category: 'ram',
-        text: `${formatSize(memory.capacity)} ${memory.gen} ${memory.speed}mhz ${memory.brand}`,
-      }));
+      memoryRepo.save(data);
     } catch (error) {
       console.error('Error fetching memories', error);
     }
@@ -80,7 +77,7 @@ export const useMemoryStore = defineStore('memory', () => {
 
   return {
     // state
-    memories, capacity, sortBy,
+    capacity, sortBy,
     // getters
     availableMemories, filteredMemories, capacities
     // actions
@@ -88,6 +85,6 @@ export const useMemoryStore = defineStore('memory', () => {
 
 }, {
   persist: {
-    pick: ['memories', 'filteredMemories', 'capacity'] // Specify only the fields you want to save to localStorage
+    pick: ['filteredMemories', 'capacity'] // Specify only the fields you want to save to localStorage
   }
 });

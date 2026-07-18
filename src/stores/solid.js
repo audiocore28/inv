@@ -1,18 +1,19 @@
-import { ref, reactive, shallowRef, computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { defineStore } from 'pinia';
-import { formatSize } from '../utils/format';
+import { useRepo } from 'pinia-orm';
+import Solid from '../models/Solid';
 
 export const useSolidStore = defineStore('solid', () => {
+  const solidRepo = useRepo(Solid);
 
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_q2qPyO8ztLLLcsVNMLORFsAxqrRsWb9RZ5ZRJZL8e67YbDanq6unUMejAoryCvPBrw/exec';
 
   // --- State ---------------------------------------------
-  const solids = shallowRef([]);
   const capacity = ref('all');
   const sortBy = ref('Capacity Desc');
 
   // --- Getters ---------------------------------------------
-  const availableSolids = computed(() => solids.value.filter(s => s.available));
+  const availableSolids = computed(() => solidRepo.query().where('available', true).withAll().get());
 
   const filteredSolids = computed(() => {
     let filtered = [];
@@ -67,20 +68,7 @@ export const useSolidStore = defineStore('solid', () => {
     try {
       const response = await fetch(GOOGLE_SCRIPT_URL); 
       const data = await response.json();
-      solids.value = data.map(solid => ({
-        ...solid,
-        category: 'ssd',
-
-        text: `
-${formatSize(solid.capacity)} SSD ${solid.form} inch ${solid.brand} ${solid.series} ${solid.health}% health
-
-${formatSize(solid.capacity)} Solid State Drive / SSD
-${solid.form} inch 
-${solid.brand} ${solid.series}
-${solid.interface}
-${solid.health}% health
-        `,
-      }));
+      solidRepo.save(data);
     } catch (error) {
       console.error('Error fetching solids', error);
     }
@@ -89,7 +77,7 @@ ${solid.health}% health
 
   return {
     // state
-    solids, capacity, sortBy,
+    capacity, sortBy,
     // getters
     availableSolids, filteredSolids, capacities
     // actions
@@ -97,6 +85,6 @@ ${solid.health}% health
 
 }, {
   persist: {
-    pick: ['solids', 'filteredSolids', 'capacity'] // Specify only the fields you want to save to localStorage
+    pick: ['filteredSolids', 'capacity'] // Specify only the fields you want to save to localStorage
   }
 });
