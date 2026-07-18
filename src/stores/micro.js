@@ -49,11 +49,31 @@ export const useMicroStore = defineStore('micro', () => {
     }
   
     const enrichedMicros = micros.value.map(micro => {
+
+      let text = `
+${micro.brand} ${micro.model} ${micro.series} ${micro.formFactor}`;
+
+      microMemoriesMap.get(micro.id)?.forEach(memory => {
+        text += `
+${memory.brand} ${memory.capacity}GB ${memory.gen} ${memory.speed}mhz`;
+      });
+
+      microSolidsMap.get(micro.id)?.forEach(solid => {
+        text += `
+${solid.brand} ${solid.series} ${formatSize(solid.capacity)} : ${solid.health}%`;
+      });
+
+      microDisksMap.get(micro.id)?.forEach(disk => {
+        text += `
+${disk.brand} ${disk.model} ${formatSize(disk.capacity)} : ${disk.year} - ${disk.health}%`;
+      });
+
       return {
         ...micro,
         memories: microMemoriesMap.get(micro.id) || [],
         solids: microSolidsMap.get(micro.id) || [],
-        disks: microDisksMap.get(micro.id) || []
+        disks: microDisksMap.get(micro.id) || [],
+        text
       };
     });
 
@@ -120,9 +140,6 @@ export const useMicroStore = defineStore('micro', () => {
       micros.value = data.map(micro => ({
         ...micro,
         category: 'micro',
-        text: `
-${micro.brand} ${micro.model} ${micro.series} ${micro.formFactor}
-        `,
       }));
     } catch (error) {
       console.error('Error fetching micros', error);
