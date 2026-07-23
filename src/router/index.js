@@ -15,7 +15,7 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/pc',
+      path: '/pc/:brand?',
       name: 'pc',
       component: MicroView,
     },

@@ -56,27 +56,18 @@ const props = defineProps({
     </div>
 
     <div 
-      v-if="groupBy === 'brand'"
+      v-if="groupBy === 'seriesBy'"
       v-for="g in groups"
-      @click.prevent="emit('changeGroup', g.brand)" 
-      :ref="(el) => { if (group === g.brand) el?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }) }"
+      @click.prevent="emit('changeGroup', g.series)" 
+      :ref="(el) => { if (group === g.series) el?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }) }"
       class="text-slate-300 rounded-lg text-xs transition-all whitespace-nowrap font-inter capitalize cursor-pointer"
       :class="{
-        'bg-slate-700' : group === g.brand,
-        'bg-slate-800/70' : group !== g.brand,
+        'bg-slate-700' : group === g.series,
+        'bg-slate-800/70' : group !== g.series,
       }"
     >
       <div>
-        <p 
-          class="px-4 pt-2 text-gray-500 text-xs"
-          :class="{
-            'text-sky-600' : group === g.brand && g.brand === 'Dell' && category === 'micro',
-            'text-rose-500' : group === g.brand && g.brand === 'Lenovo' && category === 'micro',
-            'text-gray-500' : group === g.brand && g.brand === 'HP' && category === 'micro',
-          }"
-        >
-          {{ g.brand }}
-        </p>
+        <p class="px-4 pt-2 text-gray-500 text-xs">{{ g.series }}</p>
         <div class="px-4 min-w-[80px] h-[80px] flex justify-center items-center">
           <h3 class="text-3xl font-bold font-oswald mt-1 text-400">{{ g.count }}</h3>
         </div>
