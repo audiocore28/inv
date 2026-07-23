@@ -15,6 +15,8 @@ export const useDiskStore = defineStore('disk', () => {
   // --- Getters ---------------------------------------------
   const availableDisks = computed(() => diskRepo.query().where('available', true).withAll().get());
 
+  const soldDisks = computed(() => diskRepo.query().where('available', false).withAll().get());
+
   const filteredDisks = computed(() => {
     let filtered = [];
 
@@ -79,7 +81,7 @@ export const useDiskStore = defineStore('disk', () => {
     // state
     capacity, sortBy,
     // getters
-    availableDisks, filteredDisks, capacities
+    availableDisks, soldDisks, filteredDisks, capacities
     // actions
   }
 

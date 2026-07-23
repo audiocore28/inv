@@ -15,6 +15,8 @@ export const useSolidStore = defineStore('solid', () => {
   // --- Getters ---------------------------------------------
   const availableSolids = computed(() => solidRepo.query().where('available', true).withAll().get());
 
+  const soldSolids = computed(() => solidRepo.query().where('available', false).withAll().get());
+
   const filteredSolids = computed(() => {
     let filtered = [];
 
@@ -79,7 +81,7 @@ export const useSolidStore = defineStore('solid', () => {
     // state
     capacity, sortBy,
     // getters
-    availableSolids, filteredSolids, capacities
+    availableSolids, soldSolids, filteredSolids, capacities
     // actions
   }
 

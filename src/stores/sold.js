@@ -22,9 +22,9 @@ export const useSoldStore = defineStore('sold', () => {
 
     const soldItems = [
       ...microStore.soldMicros,
-      ...memoryStore.memories.filter(item => !item.available),
-      ...solidStore.solids.filter(item => !item.available),
-      ...diskStore.disks.filter(item => !item.available),
+      ...memoryStore.soldMemories,
+      ...solidStore.soldSolids,
+      ...diskStore.soldDisks
     ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
     const monthlySales = soldItems.reduce((acc, sale) => {

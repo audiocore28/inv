@@ -15,6 +15,8 @@ export const useMemoryStore = defineStore('memory', () => {
   // --- Getters ---------------------------------------------
   const availableMemories = computed(() => memoryRepo.query().where('available', true).withAll().get());
 
+  const soldMemories = computed(() => memoryRepo.query().where('available', false).withAll().get());
+
   const filteredMemories = computed(() => {
     let filtered = [];
 
@@ -79,7 +81,7 @@ export const useMemoryStore = defineStore('memory', () => {
     // state
     capacity, sortBy,
     // getters
-    availableMemories, filteredMemories, capacities
+    availableMemories, soldMemories, filteredMemories, capacities
     // actions
   }
 
