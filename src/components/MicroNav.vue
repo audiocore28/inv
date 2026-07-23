@@ -1,10 +1,22 @@
 <script setup>
 import { storeToRefs } from 'pinia';
 import { useMicroStore } from '../stores/micro';
+import dellIcon from '../components/icons/IconDell.vue';
+import hpIcon from '../components/icons/IconHp.vue';
+import intelIcon from '../components/icons/IconIntel.vue';
+import lenovoIcon from '../components/icons/IconLenovo.vue';
 
 const microStore = useMicroStore();
 
 const { brands, seriesBy } = storeToRefs(microStore);
+
+const iconMap = {
+  dell: dellIcon,
+  hp: hpIcon,
+  intel: intelIcon,
+  lenovo: lenovoIcon,
+
+};
 </script>
 
 <template>
@@ -16,15 +28,21 @@ const { brands, seriesBy } = storeToRefs(microStore);
         :to="{ name: 'pc', params: { brand }}" 
         @click="seriesBy = 'all'"
         class="flex flex-col items-center justify-center p-2 group"
+        :class="{
+          'text-sky-500' : brand === 'dell',
+          'text-red-600' : brand === 'lenovo',
+          'text-gray-500' : brand === 'hp',
+          'text-white' : brand === 'intel',
+        }"
       >
-        <svg class="w-6 h-6 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" width="64px" height="64px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M21.4498 10.275L11.9998 3.1875L2.5498 10.275L2.9998 11.625H3.7498V20.25H20.2498V11.625H20.9998L21.4498 10.275ZM5.2498 18.75V10.125L11.9998 5.0625L18.7498 10.125V18.75H14.9999V14.3333L14.2499 13.5833H9.74988L8.99988 14.3333V18.75H5.2498ZM10.4999 18.75H13.4999V15.0833H10.4999V18.75Z" fill="currentColor"></path> </g></svg>
-        <span class="text-[10px] uppercase mt-1 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ brand }}</span>
+        <component :is="iconMap[brand]" />
+        <!-- <span class="text-[10px] uppercase mt-1 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ brand }}</span> -->
       </RouterLink>
 
       <!-- Sales -->
       <RouterLink to="/sold" class="flex flex-col items-center justify-center p-2 group">
-        <svg width="64px" height="64px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="w-6 h-6 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" fill="currentColor" transform="rotate(270)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>140</title> <defs> </defs> <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g fill="currentColor"> <path d="M5.811,11.799 L11.663,5.947 C12.825,6.548 14.207,6.436 15.095,5.549 C15.779,4.864 16.01,3.883 15.804,2.936 L14.295,4.442 L12.951,4.704 L11.325,3.095 L11.605,1.71 L13.1,0.235 C12.153,0.028 11.17,0.257 10.487,0.941 C9.598,1.829 9.488,3.211 10.089,4.374 L4.237,10.226 C3.074,9.626 1.692,9.738 0.804,10.624 C0.12,11.31 -0.111,12.29 0.096,13.237 L1.604,11.732 L2.947,11.469 L4.575,13.078 L4.294,14.463 L2.799,15.939 C3.745,16.145 4.728,15.917 5.412,15.232 C6.299,14.344 6.41,12.962 5.811,11.799 L5.811,11.799 Z" class="si-glyph-fill"> </path> <g> <path d="M14.107,12.334 L12.277,11.736 L9.941,9.4 L9.361,9.98 L11.697,12.314 L12.334,14.186 L15.401,16.019 L15.98,15.44 L14.107,12.334 Z" class="si-glyph-fill"> </path> <path d="M7.277,5.107 L2.478,0.29 C2.075,-0.114 1.367,-0.064 0.9,0.408 L0.367,0.94 C-0.1,1.412 -0.153,2.119 0.252,2.525 L5.049,7.342 L7.277,5.107 L7.277,5.107 Z" class="si-glyph-fill"> </path> </g> </g> </g> </g></svg>
-        <span class="text-[10px] mt-1 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">SALES</span>
+        <svg class="w-7 h-7 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" width="64px" height="64px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="currentColor" d="M704 288h131.072a32 32 0 0 1 31.808 28.8L886.4 512h-64.384l-16-160H704v96a32 32 0 1 1-64 0v-96H384v96a32 32 0 0 1-64 0v-96H217.92l-51.2 512H512v64H131.328a32 32 0 0 1-31.808-35.2l57.6-576a32 32 0 0 1 31.808-28.8H320v-22.336C320 154.688 405.504 64 512 64s192 90.688 192 201.664v22.4zm-64 0v-22.336C640 189.248 582.272 128 512 128c-70.272 0-128 61.248-128 137.664v22.4h256zm201.408 476.16a32 32 0 1 1 45.248 45.184l-128 128a32 32 0 0 1-45.248 0l-128-128a32 32 0 1 1 45.248-45.248L704 837.504V608a32 32 0 1 1 64 0v229.504l73.408-73.408z"></path></g></svg>
+        <!-- <span class="text-[10px] mt-1 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">SALES</span> -->
       </RouterLink>
 
     </div>

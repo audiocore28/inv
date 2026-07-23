@@ -1,5 +1,6 @@
 <script setup>
 import Sold from '@/components/Sold.vue';
+import MicroNav from '@/components/MicroNav.vue';
 </script>
 
 <template>
@@ -12,5 +13,6 @@ import Sold from '@/components/Sold.vue';
       <Sold />
     </div>
 
+    <MicroNav />
   </div>
 </template>
