@@ -1,13 +1,17 @@
-<script setup> 
-import MobileNav from '@/components/MobileNav.vue';
+<script setup>
+import { ref } from 'vue';
+import Sidebar from './components/Sidebar.vue';
+
 </script>
 
 <template>
-  <div class="bg-slate-900">
-    <div class="max-w-screen-2xl mx-auto p-5 sm:p-10 md:p-16 2xl:p-28">
-      <RouterView />
-    </div>
+  <Sidebar>
+    <template #content>
 
-    <MobileNav />
-  </div>
+      <div class="mb-25">
+        <RouterView />
+      </div>
+
+    </template>
+  </Sidebar>
 </template>

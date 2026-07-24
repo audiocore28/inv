@@ -17,6 +17,25 @@ export const useSoldStore = defineStore('sold', () => {
   const quota = ref(5000);
 
   // --- Getters ---------------------------------------------
+  const currentMonthCount = computed(() => {
+    const soldItems = [
+      ...microStore.soldMicros,
+      ...memoryStore.soldMemories,
+      ...solidStore.soldSolids,
+      ...diskStore.soldDisks
+    ].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    const currentMonth = new Date().getMonth(); // Get current month (0-11)
+
+    const filtered = soldItems.filter(item => {
+      const itemDate = new Date(item.date);
+
+      return itemDate.getMonth() === currentMonth; // Filter by current month
+    });
+
+    return filtered.length;
+  });
+
 
   const monthlyAggregates = computed(() => {
 
@@ -88,7 +107,7 @@ export const useSoldStore = defineStore('sold', () => {
     // state
     sold,
     //getters
-    monthlyAggregates,
+    monthlyAggregates, currentMonthCount,
     // actions
     toggleSold
   }
