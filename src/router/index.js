@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import MicroView from '../views/MicroView.vue'
+import ProcessorView from '../views/ProcessorView.vue'
 import HardDriveView from '../views/HardDriveView.vue'
 import MemoryView from '../views/MemoryView.vue'
 import SolidView from '../views/SolidView.vue'
@@ -30,6 +31,11 @@ const router = createRouter({
           path: '',
           name: 'partshome',
           component: PartsHomeView,
+        },
+        {
+          path: 'cpu',
+          name: 'cpu',
+          component: ProcessorView,
         },
         {
           path: 'ram',

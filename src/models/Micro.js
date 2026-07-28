@@ -1,4 +1,5 @@
 import { Model } from 'pinia-orm'
+import Processor from './Processor'
 import Memory from './Memory'
 import Solid from './Solid'
 import Disk from './Disk'
@@ -26,6 +27,7 @@ export default class Micro extends Model {
       totalCost: this.attr(0),
       profit: this.attr(0),
       category: this.attr('micro'),
+      processors: this.hasOne(Processor, 'microId'),
       memories: this.hasMany(Memory, 'microId'),
       solids: this.hasMany(Solid, 'microId'),
       disks: this.hasMany(Disk, 'microId'),
@@ -34,6 +36,9 @@ export default class Micro extends Model {
 
   get text() {
     let specs = `${this.brand} ${this.model} ${this.series} ${this.formFactor}`;
+
+    specs += `
+${this.processors.brand} ${this.processors.series} ${this.processors.model}`;
 
     this.memories.forEach(memory => {
       specs += `

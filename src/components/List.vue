@@ -5,6 +5,7 @@ import MicroDetail from '@/components/MicroDetail.vue';
 import HardDriveDetail from '@/components/HardDriveDetail.vue';
 import MemoryDetail from '@/components/MemoryDetail.vue';
 import SolidDetail from './SolidDetail.vue';
+import ProcessorDetail from './ProcessorDetail.vue';
 
 const soldStore = useSoldStore();
 const { sold } = storeToRefs(soldStore);
@@ -18,6 +19,7 @@ const props = defineProps({
 
 const componentMap = {
   micro: MicroDetail,
+  cpu: ProcessorDetail,
   hdd: HardDriveDetail,
   ram: MemoryDetail,
   ssd: SolidDetail,

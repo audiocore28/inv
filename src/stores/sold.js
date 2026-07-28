@@ -1,12 +1,14 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import { useMicroStore } from '../stores/micro';
+import { useProcessorStore } from '../stores/processor';
 import { useMemoryStore } from '../stores/memory';
 import { useSolidStore } from '../stores/solid';
 import { useDiskStore } from '../stores/disk';
 
 export const useSoldStore = defineStore('sold', () => {
   const microStore = useMicroStore();
+  const processorStore = useProcessorStore();
   const memoryStore = useMemoryStore();
   const solidStore = useSolidStore();
   const diskStore = useDiskStore();
@@ -20,6 +22,7 @@ export const useSoldStore = defineStore('sold', () => {
   const currentMonthCount = computed(() => {
     const soldItems = [
       ...microStore.soldMicros,
+      ...processorStore.soldProcessors,
       ...memoryStore.soldMemories,
       ...solidStore.soldSolids,
       ...diskStore.soldDisks
@@ -41,6 +44,7 @@ export const useSoldStore = defineStore('sold', () => {
 
     const soldItems = [
       ...microStore.soldMicros,
+      ...processorStore.soldProcessors,
       ...memoryStore.soldMemories,
       ...solidStore.soldSolids,
       ...diskStore.soldDisks

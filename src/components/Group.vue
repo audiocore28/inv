@@ -42,7 +42,8 @@ const props = defineProps({
           class="px-4 pt-2 text-gray-500 text-xs"
           :class="{
             'text-white' : group === 'all' && category === 'micro',
-            'text-green-500' : group === 'all' && category === 'ram',
+            'text-purple-600' : group === 'all' && category === 'cpu',
+            'text-lime-500' : group === 'all' && category === 'ram',
             'text-yellow-500' : group === 'all' && category === 'ssd',
             'text-orange-500' : group === 'all' && category === 'hdd',
           }"
@@ -75,6 +76,32 @@ const props = defineProps({
     </div>
 
     <div 
+      v-else-if="groupBy === 'gen'"
+      v-for="g in groups"
+      @click.prevent="emit('changeGroup', g.gen)" 
+      :ref="(el) => { if (group === g.gen) el?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }) }"
+      class="text-slate-300 rounded-lg text-xs transition-all whitespace-nowrap font-inter capitalize cursor-pointer"
+      :class="{
+        'bg-slate-700' : group === g.gen,
+        'bg-slate-800/70' : group !== g.gen,
+      }"
+    >
+      <div>
+        <p 
+          class="px-4 pt-2 text-gray-500 text-xs"
+          :class="{
+            'text-purple-600' : group === g.gen && category === 'cpu',
+          }"
+        >
+          {{ g.gen }}th gen
+        </p>
+        <div class="px-4 min-w-[80px] h-[80px] flex justify-center items-center">
+          <h3 class="text-3xl font-bold font-oswald mt-1 text-400">{{ g.count }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div 
       v-else
       v-for="g in groups"
       @click.prevent="emit('changeGroup', g.cap)" 
@@ -89,7 +116,8 @@ const props = defineProps({
         <p 
           class="px-4 pt-2 text-gray-500 text-xs"
           :class="{
-            'text-green-500' : group === g.cap && category === 'ram',
+            'text-purple-600' : group === g.gen && category === 'cpu',
+            'text-lime-500' : group === g.cap && category === 'ram',
             'text-yellow-500' : group === g.cap && category === 'ssd',
             'text-orange-500' : group === g.cap && category === 'hdd',
           }"

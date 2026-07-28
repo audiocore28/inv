@@ -59,6 +59,14 @@ const props = defineProps({
     <div class="flex flex-col gap-2 mt-2">
       <div class="flex flex-col gap-4 text-slate-500 pb-2">
   
+        <span class="inline-flex items-center gap-2 px-2 text-sm font-medium rounded-md transition-colors duration-200">
+          <svg fill="currentColor" class="w-4 h-4" width="64px" height="64px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M14.25,8H9.75A1.752,1.752,0,0,0,8,9.75v4.5A1.752,1.752,0,0,0,9.75,16h4.5A1.752,1.752,0,0,0,16,14.25V9.75A1.752,1.752,0,0,0,14.25,8ZM14,14H10V10h4Zm8-5a1,1,0,0,0,0-2H20V6.75A2.752,2.752,0,0,0,17.25,4H17V2a1,1,0,0,0-2,0V4H13V2a1,1,0,0,0-2,0V4H9V2A1,1,0,0,0,7,2V4H6.75A2.752,2.752,0,0,0,4,6.75V7H2A1,1,0,0,0,2,9H4v2H2a1,1,0,0,0,0,2H4v2H2a1,1,0,0,0,0,2H4v.25A2.752,2.752,0,0,0,6.75,20H7v2a1,1,0,0,0,2,0V20h2v2a1,1,0,0,0,2,0V20h2v2a1,1,0,0,0,2,0V20h.25A2.752,2.752,0,0,0,20,17.25V17h2a1,1,0,0,0,0-2H20V13h2a1,1,0,0,0,0-2H20V9Zm-4,8.25a.751.751,0,0,1-.75.75H6.75A.751.751,0,0,1,6,17.25V6.75A.751.751,0,0,1,6.75,6h10.5a.751.751,0,0,1,.75.75Z"></path></g></svg>
+          <span class="font-inter text-xs"><span class="capitalize">{{ `${item.processors.brand} ${item.processors.series} ` }}</span>{{ `${item.processors.model}` }}</span>
+        </span>
+  
+      </div>
+      <div class="flex flex-col gap-4 text-slate-500 pb-2">
+  
         <span 
           v-for="memory in item.memories" 
           class="inline-flex items-center gap-2 px-2 text-sm font-medium rounded-md transition-colors duration-200"
