@@ -11,6 +11,7 @@ export default class Solid extends Model {
       id: this.uid(),
       capacity: this.attr(0),
       form: this.attr(''),
+      size: this.attr(0),
       interface: this.attr(''),
       brand: this.attr(''),
       series: this.attr(''),
@@ -29,6 +30,14 @@ export default class Solid extends Model {
     }
   }
 
+  get ssdDesc() {
+    return `${formatSize(this.capacity)} ${this.form === 'm.2' ? 'm.2' : ''} ${this.interface === 'nvme' ? 'NVMe' : 'SSD'} ${this.size} ${this.brand} ${this.series} ${this.health > 0 ? `(${this.health}% health)` : ''}`;
+  }
+
+  get desc() {
+    return `${formatSize(this.capacity)} ${this.interface.toUpperCase()} ${this.size} ${this.brand} ${this.series} ${this.health > 0 ? `: ${this.health}%` : ''}`;
+  }
+
   get text() {
     return `
 ${formatSize(this.capacity)} SSD ${this.form} inch ${this.brand} ${this.series} ${this.health}% health
@@ -36,7 +45,7 @@ ${formatSize(this.capacity)} SSD ${this.form} inch ${this.brand} ${this.series} 
 ${formatSize(this.capacity)} Solid State Drive / SSD
 ${this.form} inch 
 ${this.brand} ${this.series}
-${this.interface}
+${this.interface.toUpperCase()}
 ${this.health}% health
     `;
   }

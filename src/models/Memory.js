@@ -31,7 +31,7 @@ export default class Memory extends Model {
   }
 
   get text() {
-    return `${formatSize(this.capacity)} ${this.gen} ${this.speed}mhz ${this.brand}`;
+    return `${formatSize(this.capacity)} ${this.gen.toUpperCase()} ${this.speed}mhz ${this.brand}`;
   }
 
 }

@@ -30,15 +30,19 @@ export default class Disk extends Model {
     }
   }
 
+  get desc() {
+    return `${formatSize(this.capacity)} ${this.brand} ${this.model} : ${this.year} ${this.health > 0 ? `- ${this.health}%` : ''}`;
+  }
+
   get text() {
     return `
-${formatSize(this.capacity)} HDD ${this.form} inch ${this.brand} ${this.model} ${this.health}% health
+${formatSize(this.capacity)} HDD ${this.form} inch ${this.brand} ${this.model} ${this.health > 0 ? `(${this.health}% health)` : ''};
 
 ${formatSize(this.capacity)} Hard Disk Drive / HDD
 ${this.form} inch 
 ${this.brand} ${this.model}
 ${this.rpm}rpm
-${this.health}% health
+${this.health > 0 ? `${this.health}% health` : ''}
 ${this.year}
 
 For Laptop / External Storage

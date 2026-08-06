@@ -1,6 +1,6 @@
 import { Model } from 'pinia-orm'
 import Micro from './Micro'
-import { formatSize } from '../utils/format';
+import { capitalize } from '../utils/format';
 
 export default class Processor extends Model {
 
@@ -36,10 +36,14 @@ export default class Processor extends Model {
   get model() {
     return `${this.tier}-${this.gen}${this.sku}${this.suffix}`;
   }
+  
+  get desc() {
+    return `${capitalize(this.brand)} ${capitalize(this.series)} ${this.model}`
+  }
 
   get text() {
     return `
-${this.brand} ${this.series} ${this.model}
+${this.desc}
 
 ${this.core} cores / ${this.thread} threads
 ${this.speed.toFixed(2)} mhz
