@@ -9,7 +9,7 @@ import MicroNav from '@/components/MicroNav.vue';
 
 const microStore = useMicroStore();
 
-const { filteredMicros, sortBy, brandCount, seriesBy, series } = storeToRefs(microStore);
+const { filteredMicros, sortBy, brandCount, seriesBy, groups } = storeToRefs(microStore);
 
 const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Brand (Z-A)']);
 </script>
@@ -18,7 +18,7 @@ const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Brand (Z-A)']);
   <div>
     <div class="bg-slate-900 sticky top-0 w-full z-[200]">
       <div class="max-w-screen-2xl mx-auto px-5 sm:px-10 md:px-16 2xl:px-28">
-        <Group :count="brandCount" :groups="series" :group="seriesBy" @changeGroup="seriesBy = $event" :groupBy="'seriesBy'" :category="'micro'"/>
+        <Group :count="brandCount" :groups="groups" :group="seriesBy" @changeGroup="seriesBy = $event" :category="'micro'"/>
       </div>
     </div>
 

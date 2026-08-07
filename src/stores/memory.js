@@ -39,25 +39,32 @@ export const useMemoryStore = defineStore('memory', () => {
   });
 
 
-  const capacities = computed(() => {
+  const groups = computed(() => {
 
-    // Get all capacities from memories
-    const allCapacities = availableMemories.value.map(memory => memory.capacity);
+    const group = availableMemories.value.reduce((acc, memory) => {
+      const category = memory.capacity;
 
-    // Get unique capacities and their counts
-    const capacityCounts = allCapacities.reduce((acc, cap) => {
-      acc[cap] = (acc[cap] || 0) + 1;
+      if (!acc[category]) {
+        acc[category] = {
+          count: 0,
+          items: []
+        }
+      }
+
+      acc[category].count += 1;
+      acc[category].items.push(memory);
+
       return acc;
     }, {});
 
-    // Convert the counts object into an array of objects with capacity and count
-    const uniqueCapacities = Object.entries(capacityCounts).map(([cap, count]) => ({
-      cap: parseInt(cap, 10),
-      count
+    const categories = Object.entries(group).map(([category, data]) => ({
+      category: parseInt(category, 10),
+      name: `${category}GB`,
+      count: data.count,
+      items: data.items,
     }));
 
-    // Sort the unique capacities in descending order
-    return uniqueCapacities.sort((a, b) => b.cap - a.cap);
+    return categories.sort((a, b) => b.category - a.category);
 
   });
 
@@ -81,7 +88,7 @@ export const useMemoryStore = defineStore('memory', () => {
     // state
     capacity, sortBy,
     // getters
-    availableMemories, soldMemories, filteredMemories, capacities
+    availableMemories, soldMemories, filteredMemories, groups,
     // actions
   }
 

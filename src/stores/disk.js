@@ -1,6 +1,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { defineStore } from 'pinia';
 import { useRepo } from 'pinia-orm';
+import { formatSize } from '../utils/format';
 import Disk from '../models/Disk';
 
 export const useDiskStore = defineStore('disk', () => {
@@ -61,6 +62,35 @@ export const useDiskStore = defineStore('disk', () => {
 
   });
 
+  const groups = computed(() => {
+
+    const group = availableDisks.value.reduce((acc, disk) => {
+      const category = disk.capacity;
+
+      if (!acc[category]) {
+        acc[category] = {
+          count: 0,
+          items: []
+        }
+      }
+
+      acc[category].count += 1;
+      acc[category].items.push(disk);
+
+      return acc;
+    }, {});
+
+    const categories = Object.entries(group).map(([category, data]) => ({
+      category: parseInt(category, 10),
+      name: formatSize(parseInt(category, 10)),
+      count: data.count,
+      items: data.items,
+    }));
+
+    return categories.sort((a, b) => b.category - a.category);
+
+  });
+
   // Styles
 
   // --- Actions ---------------------------------------------
@@ -81,7 +111,7 @@ export const useDiskStore = defineStore('disk', () => {
     // state
     capacity, sortBy,
     // getters
-    availableDisks, soldDisks, filteredDisks, capacities
+    availableDisks, soldDisks, filteredDisks, capacities, groups,
     // actions
   }
 

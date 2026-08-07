@@ -8,7 +8,7 @@ import Sort from '@/components/Sort.vue';
 
 const processorStore = useProcessorStore();
 
-const { availableProcessors, filteredProcessors, sortBy, gen, generations } = storeToRefs(processorStore);
+const { availableProcessors, filteredProcessors, sortBy, gen, groups } = storeToRefs(processorStore);
 
 const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Gen Asc', 'Gen Desc']);
 </script>
@@ -17,7 +17,7 @@ const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Gen Asc', 'Gen Desc']);
   <div>
     <div class="bg-slate-900 sticky top-0 w-full z-[200]">
       <div class="max-w-screen-2xl mx-auto px-5 sm:px-10 md:px-16 2xl:px-28">
-        <Group :count="availableProcessors.length" :groups="generations" :group="gen" @changeGroup="gen = $event" :groupBy="'gen'" :category="'cpu'" />
+        <Group :count="availableProcessors.length" :groups="groups" :group="gen" @changeGroup="gen = $event" :category="'cpu'" />
       </div>
     </div>
 

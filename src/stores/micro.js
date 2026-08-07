@@ -50,30 +50,35 @@ export const useMicroStore = defineStore('micro', () => {
 
   const brandCount = computed(() => availableMicros.value.filter(a => brand.value === 'all' || a.brand === brand.value).length);
 
-  const series = computed(() => {
+  const groups = computed(() => {
+    const filtered = availableMicros.value.filter(micro => micro.brand === brand.value);
 
-    // Get all series from each brand
-    const allSeries = availableMicros.value
-      .filter(micro => micro.brand === brand.value)
-      .map(micro => micro.series);
+    const group = filtered.reduce((acc, micro) => {
+      const category = micro.series;
 
-    // Get unique series and their counts
-    const seriesCounts = allSeries.reduce((acc, s) => {
-      acc[s] = (acc[s] || 0) + 1;
+      if (!acc[category]) {
+        acc[category] = {
+          count: 0,
+          items: []
+        }
+      }
+
+      acc[category].count += 1;
+      acc[category].items.push(micro);
+
       return acc;
     }, {});
 
-    // Convert the counts object into an array of objects with serie and count
-    const uniqueSeries = Object.entries(seriesCounts).map(([series, count]) => ({
-      series,
-      count
+    const categories = Object.entries(group).map(([category, data]) => ({
+      category,
+      name: category,
+      count: data.count,
+      items: data.items,
     }));
 
-    // Sort the unique series in descending order
-    return uniqueSeries.sort((a, b) => b.series - a.series);
+    return categories.sort((a, b) => b.category - a.category);
 
   });
-
   // Styles
 
   // --- Actions ---------------------------------------------
@@ -96,7 +101,7 @@ export const useMicroStore = defineStore('micro', () => {
     // state
     brand, seriesBy, sortBy,
     // getters
-    availableMicros, soldMicros, filteredMicros, brands, brandCount, series,
+    availableMicros, soldMicros, filteredMicros, brands, brandCount, groups,
     // actions
   }
 

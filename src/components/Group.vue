@@ -16,9 +16,6 @@ const props = defineProps({
     type: [String, Number],
     default: 'all',
   },
-  groupBy: {
-    type: String,
-  },
   category: {
     type: String,
   },
@@ -57,33 +54,13 @@ const props = defineProps({
     </div>
 
     <div 
-      v-if="groupBy === 'seriesBy'"
       v-for="g in groups"
-      @click.prevent="emit('changeGroup', g.series)" 
-      :ref="(el) => { if (group === g.series) el?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }) }"
+      @click.prevent="emit('changeGroup', g.category)" 
+      :ref="(el) => { if (group === g.category) el?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }) }"
       class="text-slate-300 rounded-lg text-xs transition-all whitespace-nowrap font-inter capitalize cursor-pointer"
       :class="{
-        'bg-slate-700' : group === g.series,
-        'bg-slate-800/70' : group !== g.series,
-      }"
-    >
-      <div>
-        <p class="px-4 pt-2 text-gray-500 text-xs">{{ g.series }}</p>
-        <div class="px-4 min-w-[80px] h-[80px] flex justify-center items-center">
-          <h3 class="text-3xl font-bold font-oswald mt-1 text-400">{{ g.count }}</h3>
-        </div>
-      </div>
-    </div>
-
-    <div 
-      v-else-if="groupBy === 'gen'"
-      v-for="g in groups"
-      @click.prevent="emit('changeGroup', g.gen)" 
-      :ref="(el) => { if (group === g.gen) el?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }) }"
-      class="text-slate-300 rounded-lg text-xs transition-all whitespace-nowrap font-inter capitalize cursor-pointer"
-      :class="{
-        'bg-slate-700' : group === g.gen,
-        'bg-slate-800/70' : group !== g.gen,
+        'bg-slate-700' : group === g.category,
+        'bg-slate-800/70' : group !== g.category,
       }"
     >
       <div>
@@ -91,38 +68,12 @@ const props = defineProps({
           class="px-4 pt-2 text-gray-500 text-xs"
           :class="{
             'text-purple-600' : group === g.gen && category === 'cpu',
+            'text-lime-500' : group === g.category && category === 'ram',
+            'text-yellow-500' : group === g.category && category === 'ssd',
+            'text-orange-500' : group === g.category && category === 'hdd',
           }"
         >
-          {{ g.gen }}th gen
-        </p>
-        <div class="px-4 min-w-[80px] h-[80px] flex justify-center items-center">
-          <h3 class="text-3xl font-bold font-oswald mt-1 text-400">{{ g.count }}</h3>
-        </div>
-      </div>
-    </div>
-
-    <div 
-      v-else
-      v-for="g in groups"
-      @click.prevent="emit('changeGroup', g.cap)" 
-      :ref="(el) => { if (group === g.cap) el?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }) }"
-      class="text-slate-300 rounded-lg text-xs transition-all whitespace-nowrap font-inter capitalize cursor-pointer"
-      :class="{
-        'bg-slate-700' : group === g.cap,
-        'bg-slate-800/70' : group !== g.cap,
-      }"
-    >
-      <div>
-        <p 
-          class="px-4 pt-2 text-gray-500 text-xs"
-          :class="{
-            'text-purple-600' : group === g.gen && category === 'cpu',
-            'text-lime-500' : group === g.cap && category === 'ram',
-            'text-yellow-500' : group === g.cap && category === 'ssd',
-            'text-orange-500' : group === g.cap && category === 'hdd',
-          }"
-        >
-          {{ formatSize(g.cap) }}
+          {{ g.name }}
         </p>
         <div class="px-4 min-w-[80px] h-[80px] flex justify-center items-center">
           <h3 class="text-3xl font-bold font-oswald mt-1 text-400">{{ g.count }}</h3>

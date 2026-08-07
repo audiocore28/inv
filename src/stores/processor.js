@@ -39,25 +39,32 @@ export const useProcessorStore = defineStore('processor', () => {
   });
 
 
-  const generations = computed(() => {
+  const groups = computed(() => {
 
-    // Get all generations from processors
-    const allGenerations = availableProcessors.value.map(processor => processor.gen);
+    const group = availableProcessors.value.reduce((acc, processor) => {
+      const category = processor.gen;
 
-    // Get unique generations and their counts
-    const generationCounts = allGenerations.reduce((acc, gen) => {
-      acc[gen] = (acc[gen] || 0) + 1;
+      if (!acc[category]) {
+        acc[category] = {
+          count: 0,
+          items: []
+        }
+      }
+
+      acc[category].count += 1;
+      acc[category].items.push(processor);
+
       return acc;
     }, {});
 
-    // Convert the counts object into an array of objects with gen and count
-    const uniqueGenerations = Object.entries(generationCounts).map(([gen, count]) => ({
-      gen: parseInt(gen, 10),
-      count
+    const categories = Object.entries(group).map(([category, data]) => ({
+      category: parseInt(category, 10),
+      name: `${category}th gen`,
+      count: data.count,
+      items: data.items,
     }));
 
-    // Sort the unique generations in descending order
-    return uniqueGenerations.sort((a, b) => b.gen - a.gen);
+    return categories.sort((a, b) => b.category - a.category);
 
   });
 
@@ -81,7 +88,7 @@ export const useProcessorStore = defineStore('processor', () => {
     // state
     gen, sortBy,
     // getters
-    availableProcessors, soldProcessors, filteredProcessors, generations
+    availableProcessors, soldProcessors, filteredProcessors, groups,
     // actions
   }
 

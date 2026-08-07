@@ -8,7 +8,7 @@ import Sort from '@/components/Sort.vue';
 
 const memoryStore = useMemoryStore();
 
-const { availableMemories, filteredMemories, sortBy, capacity, capacities } = storeToRefs(memoryStore);
+const { availableMemories, filteredMemories, sortBy, capacity, groups } = storeToRefs(memoryStore);
 
 const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Capacity Asc', 'Capacity Desc']);
 </script>
@@ -17,7 +17,7 @@ const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Capacity Asc', 'Capacity De
   <div>
     <div class="bg-slate-900 sticky top-0 w-full z-[200]">
       <div class="max-w-screen-2xl mx-auto px-5 sm:px-10 md:px-16 2xl:px-28">
-        <Group :count="availableMemories.length" :groups="capacities" :group="capacity" @changeGroup="capacity = $event" :category="'ram'" />
+        <Group :count="availableMemories.length" :groups="groups" :group="capacity" @changeGroup="capacity = $event" :category="'ram'" />
       </div>
     </div>
 

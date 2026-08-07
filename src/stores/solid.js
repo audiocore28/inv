@@ -1,6 +1,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { defineStore } from 'pinia';
 import { useRepo } from 'pinia-orm';
+import { formatSize } from '../utils/format';
 import Solid from '../models/Solid';
 
 export const useSolidStore = defineStore('solid', () => {
@@ -38,26 +39,32 @@ export const useSolidStore = defineStore('solid', () => {
 
   });
 
+  const groups = computed(() => {
 
-  const capacities = computed(() => {
+    const group = availableSolids.value.reduce((acc, solid) => {
+      const category = solid.capacity;
 
-    // Get all capacities from solids
-    const allCapacities = availableSolids.value.map(solid => solid.capacity);
+      if (!acc[category]) {
+        acc[category] = {
+          count: 0,
+          items: []
+        }
+      }
 
-    // Get unique capacities and their counts
-    const capacityCounts = allCapacities.reduce((acc, cap) => {
-      acc[cap] = (acc[cap] || 0) + 1;
+      acc[category].count += 1;
+      acc[category].items.push(solid);
+
       return acc;
     }, {});
 
-    // Convert the counts object into an array of objects with capacity and count
-    const uniqueCapacities = Object.entries(capacityCounts).map(([cap, count]) => ({
-      cap: parseInt(cap, 10),
-      count
+    const categories = Object.entries(group).map(([category, data]) => ({
+      category: parseInt(category, 10),
+      name: formatSize(parseInt(category, 10)),
+      count: data.count,
+      items: data.items,
     }));
 
-    // Sort the unique capacities in descending order
-    return uniqueCapacities.sort((a, b) => b.cap - a.cap);
+    return categories.sort((a, b) => b.category - a.category);
 
   });
 
@@ -81,7 +88,7 @@ export const useSolidStore = defineStore('solid', () => {
     // state
     capacity, sortBy,
     // getters
-    availableSolids, soldSolids, filteredSolids, capacities
+    availableSolids, soldSolids, filteredSolids, groups,
     // actions
   }
 
