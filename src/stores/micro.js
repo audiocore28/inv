@@ -17,7 +17,7 @@ export const useMicroStore = defineStore('micro', () => {
 
   // --- Getters ---------------------------------------------
   watch(() => route.params, (newParams) => {
-    brand.value = newParams.brand;
+    brand.value = newParams.category;
   });
 
   const availableMicros = computed(() => microRepo.query().where('available', true).withAll().get());
@@ -85,7 +85,7 @@ export const useMicroStore = defineStore('micro', () => {
 
 
   onMounted(async () => {
-    brand.value = route.params.brand || 'all';
+    brand.value = route.params.category || 'all';
 
     try {
       const response = await fetch(GOOGLE_SCRIPT_URL); 

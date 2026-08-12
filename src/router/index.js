@@ -18,9 +18,29 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/pc/:brand?',
+      path: '/pc/:category?',
       name: 'pc',
       component: MicroView,
+    },
+    {
+      path: '/cpu/:category?',
+      name: 'cpu',
+      component: ProcessorView,
+    },
+    {
+      path: '/ram/:category?',
+      name: 'ram',
+      component: MemoryView,
+    },
+    {
+      path: '/ssd/:category?',
+      name: 'ssd',
+      component: SolidView,
+    },
+    {
+      path: '/hdd/:category?',
+      name: 'hdd',
+      component: HardDriveView,
     },
     {
       path: '/parts',
@@ -31,26 +51,6 @@ const router = createRouter({
           path: '',
           name: 'partshome',
           component: PartsHomeView,
-        },
-        {
-          path: 'cpu',
-          name: 'cpu',
-          component: ProcessorView,
-        },
-        {
-          path: 'ram',
-          name: 'ram',
-          component: MemoryView,
-        },
-        {
-          path: 'ssd',
-          name: 'ssd',
-          component: SolidView,
-        },
-        {
-          path: 'hdd',
-          name: 'hdd',
-          component: HardDriveView,
         },
       ],
     },

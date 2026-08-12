@@ -29,6 +29,10 @@ export default class Solid extends Model {
       micro: this.belongsTo(Micro, 'microId')
     }
   }
+  
+  get formInterface() {
+    return `${this.form === 'm.2' ? '' : `${this.form}`} ${this.size} ${this.interface}`;
+  }
 
   get ssdDesc() {
     return `${formatSize(this.capacity)} ${this.form === 'm.2' ? 'm.2' : ''} ${this.interface === 'nvme' ? 'NVMe' : 'SSD'} ${this.size} ${this.brand} ${this.series} ${this.health > 0 ? `(${this.health}% health)` : ''}`;

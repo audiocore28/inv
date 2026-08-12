@@ -1,19 +1,26 @@
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { defineStore } from 'pinia';
 import { useRepo } from 'pinia-orm';
+import { useRoute } from 'vue-router';
 import { formatSize } from '../utils/format';
 import Disk from '../models/Disk';
 
 export const useDiskStore = defineStore('disk', () => {
   const diskRepo = useRepo(Disk);
+  const route = useRoute();
 
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzks1OV1xR1zmmmSPtOOqmfadH6JpHOskbDErOpFLWM3bz-EqLIDxiypayVZPMwV5Yv/exec';
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxCCPrXlpqpjYb0FrVtDYeryRv25ANu7NJ8L5v9RHqwganmjMoDlJ7aBSgCkSBVfLl_/exec';
 
   // --- State ---------------------------------------------
   const capacity = ref('all');
+  const rpm = ref('all');
   const sortBy = ref('Capacity Desc');
 
   // --- Getters ---------------------------------------------
+  watch(() => route.params, (newParams) => {
+    rpm.value = newParams.category;
+  });
+
   const availableDisks = computed(() => diskRepo.query().where('available', true).withAll().get());
 
   const soldDisks = computed(() => diskRepo.query().where('available', false).withAll().get());
@@ -21,7 +28,9 @@ export const useDiskStore = defineStore('disk', () => {
   const filteredDisks = computed(() => {
     let filtered = [];
 
-    filtered = availableDisks.value.filter(a => capacity.value === 'all' || a.capacity === parseInt(capacity.value));
+    filtered = availableDisks.value
+      .filter(a => rpm.value === 'all' || a.rpm === parseInt(rpm.value))
+      .filter(a => capacity.value === 'all' || a.capacity === parseInt(capacity.value));
 
     switch (sortBy.value) {
       case 'Recently Added':
@@ -62,9 +71,14 @@ export const useDiskStore = defineStore('disk', () => {
 
   });
 
-  const groups = computed(() => {
+  const rpms = computed(() => [...new Set(availableDisks.value.map(disk => disk.rpm))].sort((a, b) => b - a) );
 
-    const group = availableDisks.value.reduce((acc, disk) => {
+  const rpmCount = computed(() => availableDisks.value.filter(a => rpm.value === 'all' || a.rpm === parseInt(rpm.value)).length);
+
+  const groups = computed(() => {
+    const filtered = availableDisks.value.filter(disk => disk.rpm === parseInt(rpm.value));
+
+    const group = filtered.reduce((acc, disk) => {
       const category = disk.capacity;
 
       if (!acc[category]) {
@@ -97,6 +111,8 @@ export const useDiskStore = defineStore('disk', () => {
 
 
   onMounted(async () => {
+    rpm.value = route.params.category || 'all';
+
     try {
       const response = await fetch(GOOGLE_SCRIPT_URL); 
       const data = await response.json();
@@ -109,9 +125,9 @@ export const useDiskStore = defineStore('disk', () => {
 
   return {
     // state
-    capacity, sortBy,
+    capacity, rpm, sortBy,
     // getters
-    availableDisks, soldDisks, filteredDisks, capacities, groups,
+    availableDisks, soldDisks, filteredDisks, rpms, rpmCount, capacities, groups,
     // actions
   }
 

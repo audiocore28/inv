@@ -29,7 +29,11 @@ const open = ref(false);
           <button @click="open = false" class="text-gray-600 dark:text-gray-300 hover:text-red-500 focus:outline-none text-2xl">&times;</button>
         </div>
         <nav class="p-4 text-slate-400">
-          <RouterLink :to="{ name: 'pc', params: { brand: 'dell' }}" class="block py-2 px-4 rounded hover:bg-slate-900">Desktop</RouterLink>
+          <RouterLink :to="{ name: 'pc', params: { category: 'dell' }}" class="block py-2 px-4 rounded hover:bg-slate-900">Desktop</RouterLink>
+          <RouterLink :to="{ name: 'cpu', params: { category: 'intel' }}" class="block py-2 px-4 rounded hover:bg-slate-900">CPU</RouterLink>
+          <RouterLink :to="{ name: 'ram', params: { category: '3200' }}" class="block py-2 px-4 rounded hover:bg-slate-900">RAM</RouterLink>
+          <RouterLink :to="{ name: 'ssd', params: { category: '2.5  sata' }}" class="block py-2 px-4 rounded hover:bg-slate-900">SSD</RouterLink>
+          <RouterLink :to="{ name: 'hdd', params: { category: '5400' }}" class="block py-2 px-4 rounded hover:bg-slate-900">HDD</RouterLink>
           <RouterLink to="/parts" class="block py-2 px-4 rounded hover:bg-slate-900">Parts</RouterLink>
         </nav>
       </div>

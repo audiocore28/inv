@@ -5,10 +5,11 @@ import { useDiskStore } from '../stores/disk';
 import Group from '@/components/Group.vue';
 import List from '@/components/List.vue';
 import Sort from '@/components/Sort.vue';
+import MicroNav from '@/components/MicroNav.vue';
 
 const diskStore = useDiskStore();
 
-const { availableDisks, filteredDisks, sortBy, capacity, groups } = storeToRefs(diskStore);
+const { filteredDisks, sortBy, rpms,rpmCount, capacity, groups } = storeToRefs(diskStore);
 
 const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Capacity Asc', 'Capacity Desc']);
 </script>
@@ -17,7 +18,7 @@ const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Capacity Asc', 'Capacity De
   <div>
     <div class="bg-slate-900 sticky top-0 w-full z-[200]">
       <div class="max-w-screen-2xl mx-auto px-5 sm:px-10 md:px-16 2xl:px-28">
-        <Group :count="availableDisks.length" :groups="groups" :group="capacity" @changeGroup="capacity = $event" :category="'hdd'" />
+        <Group :count="rpmCount" :groups="groups" :group="capacity" @changeGroup="capacity = $event" :category="'hdd'" />
       </div>
     </div>
 
@@ -32,6 +33,8 @@ const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Capacity Asc', 'Capacity De
   
       <List :items="filteredDisks" />
     </div>
+
+    <MicroNav :link="'hdd'" :categories="rpms" :group="capacity" @changeGroup="capacity = $event"/>
 
   </div>
 </template>

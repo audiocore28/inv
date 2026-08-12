@@ -6,10 +6,33 @@ import Group from '@/components/Group.vue';
 import List from '@/components/List.vue';
 import Sort from '@/components/Sort.vue';
 import MicroNav from '@/components/MicroNav.vue';
+import dellIcon from '../components/icons/IconDell.vue';
+import hpIcon from '../components/icons/IconHp.vue';
+import intelIcon from '../components/icons/IconIntel.vue';
+import lenovoIcon from '../components/icons/IconLenovo.vue';
 
 const microStore = useMicroStore();
 
-const { filteredMicros, sortBy, brandCount, seriesBy, groups } = storeToRefs(microStore);
+const { filteredMicros, sortBy, brandCount, brands, seriesBy, groups } = storeToRefs(microStore);
+
+const iconMap = {
+  dell: {
+    icon: dellIcon,
+    color: 'text-sky-500',
+  },
+  hp: {
+    icon: hpIcon,
+    color: 'text-gray-500',
+  },
+  intel: {
+    icon: intelIcon,
+    color: 'text-white',
+  },
+  lenovo: {
+    icon: lenovoIcon,
+    color: 'text-red-600',
+  },
+};
 
 const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Brand (Z-A)']);
 </script>
@@ -34,7 +57,7 @@ const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Brand (Z-A)']);
       <List :items="filteredMicros" />
     </div>
 
-    <MicroNav />
+    <MicroNav :link="'pc'" :icons="iconMap" :categories="brands" :group="seriesBy" @changeGroup="seriesBy = $event" :label="false"/>
 
   </div>
 </template>

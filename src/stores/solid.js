@@ -1,19 +1,26 @@
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { defineStore } from 'pinia';
 import { useRepo } from 'pinia-orm';
+import { useRoute } from 'vue-router';
 import { formatSize } from '../utils/format';
 import Solid from '../models/Solid';
 
 export const useSolidStore = defineStore('solid', () => {
   const solidRepo = useRepo(Solid);
+  const route = useRoute();
 
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_q2qPyO8ztLLLcsVNMLORFsAxqrRsWb9RZ5ZRJZL8e67YbDanq6unUMejAoryCvPBrw/exec';
 
   // --- State ---------------------------------------------
   const capacity = ref('all');
+  const formInterface = ref('all');
   const sortBy = ref('Capacity Desc');
 
   // --- Getters ---------------------------------------------
+  watch(() => route.params, (newParams) => {
+    formInterface.value = newParams.category;
+  });
+
   const availableSolids = computed(() => solidRepo.query().where('available', true).withAll().get());
 
   const soldSolids = computed(() => solidRepo.query().where('available', false).withAll().get());
@@ -21,7 +28,9 @@ export const useSolidStore = defineStore('solid', () => {
   const filteredSolids = computed(() => {
     let filtered = [];
 
-    filtered = availableSolids.value.filter(a => capacity.value === 'all' || a.capacity === parseInt(capacity.value));
+    filtered = availableSolids.value
+      .filter(a => formInterface.value === 'all' || a.formInterface === formInterface.value)
+      .filter(a => capacity.value === 'all' || a.capacity === parseInt(capacity.value));
 
     switch (sortBy.value) {
       case 'Recently Added':
@@ -39,9 +48,14 @@ export const useSolidStore = defineStore('solid', () => {
 
   });
 
-  const groups = computed(() => {
+  const formInterfaces = computed(() => [...new Set(availableSolids.value.map(solid => solid.formInterface))].sort((a, b) => a.localeCompare(b)) );
 
-    const group = availableSolids.value.reduce((acc, solid) => {
+  const formInterfaceCount = computed(() => availableSolids.value.filter(a => formInterface.value === 'all' || a.formInterface === formInterface.value).length);
+
+  const groups = computed(() => {
+    const filtered = availableSolids.value.filter(solid => solid.formInterface === formInterface.value);
+
+    const group = filtered.reduce((acc, solid) => {
       const category = solid.capacity;
 
       if (!acc[category]) {
@@ -74,6 +88,8 @@ export const useSolidStore = defineStore('solid', () => {
 
 
   onMounted(async () => {
+    formInterface.value = route.params.category || 'all';
+
     try {
       const response = await fetch(GOOGLE_SCRIPT_URL); 
       const data = await response.json();
@@ -86,9 +102,9 @@ export const useSolidStore = defineStore('solid', () => {
 
   return {
     // state
-    capacity, sortBy,
+    capacity, formInterface, sortBy,
     // getters
-    availableSolids, soldSolids, filteredSolids, groups,
+    availableSolids, soldSolids, filteredSolids, formInterfaces, formInterfaceCount, groups,
     // actions
   }
 
