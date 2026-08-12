@@ -1,6 +1,13 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted } from 'vue';
+import { useDataStore } from './stores/data.js';
 import Sidebar from './components/Sidebar.vue';
+
+const dataStore = useDataStore();
+
+onMounted(() => {
+  dataStore.fetchAndSyncData();
+});
 
 </script>
 
@@ -8,7 +15,7 @@ import Sidebar from './components/Sidebar.vue';
   <Sidebar>
     <template #content>
 
-      <div class="mb-25">
+      <div class="mb-28">
         <RouterView />
       </div>
 

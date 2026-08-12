@@ -8,8 +8,6 @@ export const useMemoryStore = defineStore('memory', () => {
   const memoryRepo = useRepo(Memory);
   const route = useRoute();
 
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNweKRoVSB-Fy9ll1mJDDwx5oF_1oEhdCC-_JQO5bH-OE3DoB0Hq8SThYPVM0N9NkF/exec';
-
   // --- State ---------------------------------------------
   const capacity = ref('all');
   const speed = ref('all');
@@ -88,14 +86,6 @@ export const useMemoryStore = defineStore('memory', () => {
 
   onMounted(async () => {
     speed.value = route.params.category || 'all';
-
-    try {
-      const response = await fetch(GOOGLE_SCRIPT_URL); 
-      const data = await response.json();
-      memoryRepo.save(data);
-    } catch (error) {
-      console.error('Error fetching memories', error);
-    }
   });
 
 

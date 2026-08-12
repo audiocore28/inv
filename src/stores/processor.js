@@ -8,8 +8,6 @@ export const useProcessorStore = defineStore('processor', () => {
   const processorRepo = useRepo(Processor);
   const route = useRoute();
 
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzAPdKQgwSRNpvFmb96YtF19VipkTLJSHBfr90WQxpuMT5FQ7COBp1qqJcoxW41Attp/exec';
-
   // --- State ---------------------------------------------
   const gen = ref('all');
   const brand = ref('all');
@@ -88,14 +86,6 @@ export const useProcessorStore = defineStore('processor', () => {
 
   onMounted(async () => {
     brand.value = route.params.category || 'all';
-
-    try {
-      const response = await fetch(GOOGLE_SCRIPT_URL); 
-      const data = await response.json();
-      processorRepo.save(data);
-    } catch (error) {
-      console.error('Error fetching processors', error);
-    }
   });
 
 

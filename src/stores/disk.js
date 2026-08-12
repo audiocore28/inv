@@ -9,8 +9,6 @@ export const useDiskStore = defineStore('disk', () => {
   const diskRepo = useRepo(Disk);
   const route = useRoute();
 
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxCCPrXlpqpjYb0FrVtDYeryRv25ANu7NJ8L5v9RHqwganmjMoDlJ7aBSgCkSBVfLl_/exec';
-
   // --- State ---------------------------------------------
   const capacity = ref('all');
   const rpm = ref('all');
@@ -112,14 +110,6 @@ export const useDiskStore = defineStore('disk', () => {
 
   onMounted(async () => {
     rpm.value = route.params.category || 'all';
-
-    try {
-      const response = await fetch(GOOGLE_SCRIPT_URL); 
-      const data = await response.json();
-      diskRepo.save(data);
-    } catch (error) {
-      console.error('Error fetching disks', error);
-    }
   });
 
 

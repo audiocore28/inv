@@ -9,8 +9,6 @@ export const useSolidStore = defineStore('solid', () => {
   const solidRepo = useRepo(Solid);
   const route = useRoute();
 
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_q2qPyO8ztLLLcsVNMLORFsAxqrRsWb9RZ5ZRJZL8e67YbDanq6unUMejAoryCvPBrw/exec';
-
   // --- State ---------------------------------------------
   const capacity = ref('all');
   const formInterface = ref('all');
@@ -89,14 +87,6 @@ export const useSolidStore = defineStore('solid', () => {
 
   onMounted(async () => {
     formInterface.value = route.params.category || 'all';
-
-    try {
-      const response = await fetch(GOOGLE_SCRIPT_URL); 
-      const data = await response.json();
-      solidRepo.save(data);
-    } catch (error) {
-      console.error('Error fetching solids', error);
-    }
   });
 
 

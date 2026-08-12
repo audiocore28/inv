@@ -8,8 +8,6 @@ export const useMicroStore = defineStore('micro', () => {
   const microRepo = useRepo(Micro);
   const route = useRoute();
 
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxefHKbsrMKFlWNcJWtXWakRoXYfUbTmOIjTMCaqlWVZhbZPO4rvE2-TyK99N7JyvLQRw/exec';
-
   // --- State ---------------------------------------------
   const brand = ref('all');
   const seriesBy = ref('all');
@@ -86,14 +84,6 @@ export const useMicroStore = defineStore('micro', () => {
 
   onMounted(async () => {
     brand.value = route.params.category || 'all';
-
-    try {
-      const response = await fetch(GOOGLE_SCRIPT_URL); 
-      const data = await response.json();
-      microRepo.save(data);
-    } catch (error) {
-      console.error('Error fetching micros', error);
-    }
   });
 
 
