@@ -11,7 +11,7 @@ import M2Icon from '../components/icons/IconM2.vue';
 
 const solidStore = useSolidStore();
 
-const { filteredSolids, sortBy, formInterfaces, formInterfaceCount, capacity, groups } = storeToRefs(solidStore);
+const { filteredSolids, filteredInstalledSolids, sortBy, formInterfaces, formInterfaceCount, capacity, groups } = storeToRefs(solidStore);
 
 const iconMap = {
   'm.2-2280-nvme': M2Icon,
@@ -40,7 +40,11 @@ const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Capacity Asc', 'Capacity De
         <Sort :sorts="sorts" :sortBy="sortBy" @changeSort="sortBy = $event" />
       </div>
   
-      <List :items="filteredSolids" />
+      <h4 v-if="filteredSolids.length > 0" class="text-slate-200 text-sm font-bold font-oswald uppercase">spare :</h4>
+      <List :items="filteredSolids" class="mb-5" />
+
+      <h4 v-if="filteredInstalledSolids.length > 0" class="text-slate-200 text-sm font-bold font-oswald uppercase">installed :</h4>
+      <List :items="filteredInstalledSolids" />
     </div>
 
     <MicroNav :link="'ssd'" :icons="iconMap" :categories="formInterfaces" :group="capacity" @changeGroup="capacity = $event"/>

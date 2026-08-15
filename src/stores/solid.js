@@ -21,12 +21,41 @@ export const useSolidStore = defineStore('solid', () => {
 
   const availableSolids = computed(() => solidRepo.query().where('available', true).withAll().get());
 
+  const spareSolids = computed(() => solidRepo.query().whereDoesntHave('micro').where('available', true).get());
+
+  const installedSolids = computed(() => solidRepo.query().whereHas('micro', (query) => {
+    query.where('available', true);
+  }).where('available', true).with('micro').get());
+
   const soldSolids = computed(() => solidRepo.query().where('available', false).withAll().get());
 
   const filteredSolids = computed(() => {
     let filtered = [];
 
-    filtered = availableSolids.value
+    filtered = spareSolids.value
+      .filter(a => formInterface.value === 'all' || a.formInterface === formInterface.value)
+      .filter(a => capacity.value === 'all' || a.capacity === parseInt(capacity.value));
+
+    switch (sortBy.value) {
+      case 'Recently Added':
+        return filtered.sort((a, b) => b.id - a.id);
+      case 'Brand (A-Z)':
+        return filtered.sort((a, b) => a.brand.localeCompare(b.brand));
+      case 'Capacity Asc':
+        return filtered.sort((a, b) => a.capacity - b.capacity);
+      case 'Capacity Desc':
+        return filtered.sort((a, b) => b.capacity - a.capacity);
+
+      default:
+        return filtered.sort((a, b) => b.id - a.id);
+    }
+
+  });
+
+  const filteredInstalledSolids = computed(() => {
+    let filtered = [];
+
+    filtered = installedSolids.value
       .filter(a => formInterface.value === 'all' || a.formInterface === formInterface.value)
       .filter(a => capacity.value === 'all' || a.capacity === parseInt(capacity.value));
 
@@ -51,7 +80,9 @@ export const useSolidStore = defineStore('solid', () => {
   const formInterfaceCount = computed(() => availableSolids.value.filter(a => formInterface.value === 'all' || a.formInterface === formInterface.value).length);
 
   const groups = computed(() => {
-    const filtered = availableSolids.value.filter(solid => solid.formInterface === formInterface.value);
+    const filtered = availableSolids.value
+      .filter(solid => solid.formInterface === formInterface.value)
+      .filter(solid => !solid.micro || solid.micro?.available === true);
 
     const group = filtered.reduce((acc, solid) => {
       const category = solid.capacity;
@@ -94,7 +125,7 @@ export const useSolidStore = defineStore('solid', () => {
     // state
     capacity, formInterface, sortBy,
     // getters
-    availableSolids, soldSolids, filteredSolids, formInterfaces, formInterfaceCount, groups,
+    availableSolids, spareSolids, installedSolids, soldSolids, filteredSolids, filteredInstalledSolids, formInterfaces, formInterfaceCount, groups,
     // actions
   }
 

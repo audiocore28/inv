@@ -9,7 +9,7 @@ import MicroNav from '@/components/MicroNav.vue';
 
 const diskStore = useDiskStore();
 
-const { filteredDisks, sortBy, rpms,rpmCount, capacity, groups } = storeToRefs(diskStore);
+const { filteredDisks, filteredInstalledDisks, sortBy, rpms,rpmCount, capacity, groups } = storeToRefs(diskStore);
 
 const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Capacity Asc', 'Capacity Desc']);
 </script>
@@ -31,7 +31,12 @@ const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Capacity Asc', 'Capacity De
         <Sort :sorts="sorts" :sortBy="sortBy" @changeSort="sortBy = $event" />
       </div>
   
-      <List :items="filteredDisks" />
+      <h4 v-if="filteredDisks.length > 0" class="text-slate-200 text-sm font-bold font-oswald uppercase">spare :</h4>
+      <List :items="filteredDisks" class="mb-5" />
+
+      <h4 v-if="filteredInstalledDisks.length > 0" class="text-slate-200 text-sm font-bold font-oswald uppercase">installed :</h4>
+      <List :items="filteredInstalledDisks" />
+
     </div>
 
     <MicroNav :link="'hdd'" :categories="rpms" :group="capacity" @changeGroup="capacity = $event"/>

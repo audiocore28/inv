@@ -21,12 +21,41 @@ export const useDiskStore = defineStore('disk', () => {
 
   const availableDisks = computed(() => diskRepo.query().where('available', true).withAll().get());
 
+  const spareDisks = computed(() => diskRepo.query().whereDoesntHave('micro').where('available', true).get());
+
+  const installedDisks = computed(() => diskRepo.query().whereHas('micro', (query) => {
+    query.where('available', true);
+  }).where('available', true).with('micro').get());
+
   const soldDisks = computed(() => diskRepo.query().where('available', false).withAll().get());
 
   const filteredDisks = computed(() => {
     let filtered = [];
 
-    filtered = availableDisks.value
+    filtered = spareDisks.value
+      .filter(a => rpm.value === 'all' || a.rpm === parseInt(rpm.value))
+      .filter(a => capacity.value === 'all' || a.capacity === parseInt(capacity.value));
+
+    switch (sortBy.value) {
+      case 'Recently Added':
+        return filtered.sort((a, b) => b.id - a.id);
+      case 'Brand (A-Z)':
+        return filtered.sort((a, b) => a.brand.localeCompare(b.brand));
+      case 'Capacity Asc':
+        return filtered.sort((a, b) => a.capacity - b.capacity);
+      case 'Capacity Desc':
+        return filtered.sort((a, b) => b.capacity - a.capacity);
+
+      default:
+        return filtered.sort((a, b) => b.id - a.id);
+    }
+
+  });
+
+  const filteredInstalledDisks = computed(() => {
+    let filtered = [];
+
+    filtered = installedDisks.value
       .filter(a => rpm.value === 'all' || a.rpm === parseInt(rpm.value))
       .filter(a => capacity.value === 'all' || a.capacity === parseInt(capacity.value));
 
@@ -74,7 +103,9 @@ export const useDiskStore = defineStore('disk', () => {
   const rpmCount = computed(() => availableDisks.value.filter(a => rpm.value === 'all' || a.rpm === parseInt(rpm.value)).length);
 
   const groups = computed(() => {
-    const filtered = availableDisks.value.filter(disk => disk.rpm === parseInt(rpm.value));
+    const filtered = availableDisks.value
+      .filter(disk => disk.rpm === parseInt(rpm.value))
+      .filter(disk => !disk.micro || disk.micro?.available === true);
 
     const group = filtered.reduce((acc, disk) => {
       const category = disk.capacity;
@@ -117,7 +148,7 @@ export const useDiskStore = defineStore('disk', () => {
     // state
     capacity, rpm, sortBy,
     // getters
-    availableDisks, soldDisks, filteredDisks, rpms, rpmCount, capacities, groups,
+    availableDisks, spareDisks, installedDisks, soldDisks, filteredDisks, filteredInstalledDisks, rpms, rpmCount, capacities, groups,
     // actions
   }
 

@@ -11,7 +11,7 @@ import amdIcon from '../components/icons/IconAmd.vue';
 
 const processorStore = useProcessorStore();
 
-const { filteredProcessors, sortBy, gen, brands, brandCount, groups } = storeToRefs(processorStore);
+const { filteredProcessors, filteredInstalledProcessors, sortBy, gen, brands, brandCount, groups } = storeToRefs(processorStore);
 
 const iconMap = {
   intel: {
@@ -44,7 +44,11 @@ const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Gen Asc', 'Gen Desc']);
         <Sort :sorts="sorts" :sortBy="sortBy" @changeSort="sortBy = $event" />
       </div>
   
-      <List :items="filteredProcessors" />
+      <h4 v-if="filteredProcessors.length > 0" class="text-slate-200 text-sm font-bold font-oswald uppercase">spare :</h4>
+      <List :items="filteredProcessors" class="mb-5" />
+
+      <h4 v-if="filteredInstalledProcessors.length > 0" class="text-slate-200 text-sm font-bold font-oswald uppercase">installed :</h4>
+      <List :items="filteredInstalledProcessors" />
     </div>
 
     <MicroNav :link="'cpu'" :icons="iconMap" :categories="brands" :group="gen" @changeGroup="gen = $event" :label="false"/>

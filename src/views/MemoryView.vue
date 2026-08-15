@@ -9,7 +9,7 @@ import MicroNav from '@/components/MicroNav.vue';
 
 const memoryStore = useMemoryStore();
 
-const { filteredMemories, sortBy, speeds, speedCount, capacity, groups } = storeToRefs(memoryStore);
+const { filteredMemories, filteredInstalledMemories, sortBy, speeds, speedCount, capacity, groups } = storeToRefs(memoryStore);
 
 const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Capacity Asc', 'Capacity Desc']);
 </script>
@@ -31,7 +31,12 @@ const sorts = ref(['Recently Added', 'Brand (A-Z)', 'Capacity Asc', 'Capacity De
         <Sort :sorts="sorts" :sortBy="sortBy" @changeSort="sortBy = $event" />
       </div>
   
-      <List :items="filteredMemories" />
+      <h4 v-if="filteredMemories.length > 0" class="text-slate-200 text-sm font-bold font-oswald uppercase">spare :</h4>
+      <List :items="filteredMemories" class="mb-5" />
+
+      <h4 v-if="filteredInstalledMemories.length > 0" class="text-slate-200 text-sm font-bold font-oswald uppercase">installed :</h4>
+      <List :items="filteredInstalledMemories" />
+
     </div>
 
     <MicroNav :link="'ram'" :categories="speeds" :group="capacity" @changeGroup="capacity = $event"/>

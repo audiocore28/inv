@@ -20,12 +20,69 @@ export const useProcessorStore = defineStore('processor', () => {
 
   const availableProcessors = computed(() => processorRepo.query().where('available', true).withAll().get());
 
+  const spareProcessors = computed(() => {
+    const filtered = processorRepo.query().whereDoesntHave('micro').where('available', true).get();
+
+    const group = filtered.reduce((acc, processor) => {
+      const category = processor.desc;
+
+      if (!acc[category]) {
+        acc[category] = {
+          count: 0,
+          items: []
+        }
+      }
+
+      acc[category].count += 1;
+      acc[category].items.push(processor);
+
+      return acc;
+    }, {});
+
+    const categories = Object.entries(group).map(([category, data]) => ({
+      name: `${category}`,
+      count: data.count,
+      items: data.items,
+      ...data.items[0] // Spread the first item to include its properties in the category object
+    }));
+
+    return categories.sort((a, b) => b.category - a.category);
+
+  });
+
+  const installedProcessors = computed(() => processorRepo.query().whereHas('micro', (query) => {
+    query.where('available', true);
+  }).where('available', true).with('micro').get());
+
   const soldProcessors = computed(() => processorRepo.query().where('available', false).withAll().get());
 
   const filteredProcessors = computed(() => {
     let filtered = [];
 
-    filtered = availableProcessors.value
+    filtered = spareProcessors.value
+      .filter(a => brand.value === 'all' || a.brand === brand.value)
+      .filter(a => gen.value === 'all' || a.gen === parseInt(gen.value));
+
+    switch (sortBy.value) {
+      case 'Recently Added':
+        return filtered.sort((a, b) => b.id - a.id);
+      case 'Brand (A-Z)':
+        return filtered.sort((a, b) => a.brand.localeCompare(b.brand));
+      case 'Gen Asc':
+        return filtered.sort((a, b) => a.gen - b.gen);
+      case 'Gen Desc':
+        return filtered.sort((a, b) => b.gen - a.gen);
+
+      default:
+        return filtered.sort((a, b) => b.id - a.id);
+    }
+
+  });
+
+  const filteredInstalledProcessors = computed(() => {
+    let filtered = [];
+
+    filtered = installedProcessors.value
       .filter(a => brand.value === 'all' || a.brand === brand.value)
       .filter(a => gen.value === 'all' || a.gen === parseInt(gen.value));
 
@@ -50,7 +107,9 @@ export const useProcessorStore = defineStore('processor', () => {
   const brandCount = computed(() => availableProcessors.value.filter(a => brand.value === 'all' || a.brand === brand.value).length);
 
   const groups = computed(() => {
-    const filtered = availableProcessors.value.filter(processor => processor.brand === brand.value);
+    const filtered = availableProcessors.value
+      .filter(processor => processor.brand === brand.value)
+      .filter(processor => !processor.micro || processor.micro?.available === true);
 
     const group = filtered.reduce((acc, processor) => {
       const category = processor.gen;
@@ -93,7 +152,7 @@ export const useProcessorStore = defineStore('processor', () => {
     // state
     gen, brand, sortBy,
     // getters
-    availableProcessors, soldProcessors, filteredProcessors, brands, brandCount, groups,
+    availableProcessors, spareProcessors, installedProcessors, soldProcessors, filteredProcessors, filteredInstalledProcessors, brands, brandCount, groups,
     // actions
   }
 
