@@ -27,7 +27,20 @@ export const useDiskStore = defineStore('disk', () => {
     query.where('available', true);
   }).where('available', true).with('micro').get());
 
-  const soldDisks = computed(() => diskRepo.query().where('available', false).withAll().get());
+  const soldDisks = computed(() => {
+    const disks = diskRepo.query().where('available', false).withAll().get();
+
+    return disks.map(disk => {
+      const totalCost = (disk.shippingCost === '' ? 0 : disk.shippingCost) + (disk.costOfGoods === '' ? 0 : disk.costOfGoods);
+      const profit = (disk.salesPrice + disk.shippingCollected) - totalCost;
+
+      return {
+        ...disk,
+        totalCost,
+        profit,
+      }
+    });
+  });
 
   const filteredDisks = computed(() => {
     let filtered = [];

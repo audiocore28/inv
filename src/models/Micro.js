@@ -27,8 +27,6 @@ export default class Micro extends Model {
       shippingCollected: this.attr(0),
       shippingCost: this.attr(0),
       costOfGoods: this.attr(0),
-      totalCost: this.attr(0),
-      profit: this.attr(0),
       category: this.attr('micro'),
       processors: this.hasOne(Processor, 'microId'),
       memories: this.hasMany(Memory, 'microId'),

@@ -26,8 +26,6 @@ export default class Processor extends Model {
       shippingCollected: this.attr(0),
       shippingCost: this.attr(0),
       costOfGoods: this.attr(0),
-      totalCost: this.attr(0),
-      profit: this.attr(0),
       category: this.attr('cpu'),
       micro: this.belongsTo(Micro, 'microId')
     }

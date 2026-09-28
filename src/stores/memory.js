@@ -54,7 +54,19 @@ export const useMemoryStore = defineStore('memory', () => {
     query.where('available', true);
   }).where('available', true).with('micro').get());
 
-  const soldMemories = computed(() => memoryRepo.query().where('available', false).withAll().get());
+  const soldMemories = computed(() => {
+    const memories = memoryRepo.query().where('available', false).withAll().get();
+
+    return memories.map(memory => {
+      const totalCost = (memory.shippingCost === '' ? 0 : memory.shippingCost) + (memory.costOfGoods === '' ? 0 : memory.costOfGoods);
+      const profit = (memory.salesPrice + memory.shippingCollected) - totalCost;
+      return {
+        ...memory,
+        totalCost,
+        profit,
+      }
+    });
+  });
 
   const filteredMemories = computed(() => {
     let filtered = [];

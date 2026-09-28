@@ -27,7 +27,20 @@ export const useSolidStore = defineStore('solid', () => {
     query.where('available', true);
   }).where('available', true).with('micro').get());
 
-  const soldSolids = computed(() => solidRepo.query().where('available', false).withAll().get());
+  const soldSolids = computed(() => {
+    const solids = solidRepo.query().where('available', false).withAll().get();
+
+    return solids.map(solid => {
+      const totalCost = (solid.shippingCost === '' ? 0 : solid.shippingCost) + (solid.costOfGoods === '' ? 0 : solid.costOfGoods);
+      const profit = (solid.salesPrice + solid.shippingCollected) - totalCost;
+
+      return {
+        ...solid,
+        totalCost,
+        profit,
+      }
+    });
+  });
 
   const filteredSolids = computed(() => {
     let filtered = [];

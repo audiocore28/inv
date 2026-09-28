@@ -23,8 +23,6 @@ export default class Solid extends Model {
       shippingCollected: this.attr(0),
       shippingCost: this.attr(0),
       costOfGoods: this.attr(0),
-      totalCost: this.attr(0),
-      profit: this.attr(0),
       category: this.attr('ssd'),
       micro: this.belongsTo(Micro, 'microId')
     }
