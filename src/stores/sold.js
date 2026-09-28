@@ -16,7 +16,7 @@ export const useSoldStore = defineStore('sold', () => {
   // --- State ---------------------------------------------
 
   const sold = ref([]);
-  const quota = ref(5000);
+  const quota = ref(25000);
 
   // --- Getters ---------------------------------------------
   const purchasedItems = computed(() => {
@@ -107,13 +107,15 @@ export const useSoldStore = defineStore('sold', () => {
 
       if (!acc[month]) {
         acc[month] = {
-          totalSales: 0,
+          revenue: 0,
+          profit: 0,
           items: []
         }
       }
 
       // Accumulate sales and items
-      acc[month].totalSales += sale.profit;
+      acc[month].revenue += sale.salesPrice;
+      acc[month].profit += sale.profit;
       acc[month].items.push(sale);
 
       return acc;
@@ -121,7 +123,9 @@ export const useSoldStore = defineStore('sold', () => {
 
     const mapped = Object.keys(monthlySales).map(month => {
       const data = monthlySales[month];
-      const percentage = (data.totalSales / quota.value) * 100;
+      const percentage = (data.revenue / quota.value) * 100;
+      const profitAsQuota = (data.profit / quota.value) * 100;
+      const margin = (data.profit / data.revenue) * 100;
 
       let percentageColor;
       if (percentage >= 75) {
@@ -134,8 +138,11 @@ export const useSoldStore = defineStore('sold', () => {
 
       return {
         month,
-        totalSales: data.totalSales,
+        revenue: data.revenue,
+        profit: data.profit,
+        margin,
         items: data.items,
+        marginWidth: `${profitAsQuota}%`,
         percentageWidth: `${percentage}%`,
         percentageColor
       };

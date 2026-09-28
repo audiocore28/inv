@@ -10,7 +10,7 @@ import SolidDetail from './SolidDetail.vue';
 
 const soldStore = useSoldStore();
 
-const { sold, monthlyAggregates } = storeToRefs(soldStore);
+const { monthlyAggregates } = storeToRefs(soldStore);
 
 const componentMap = {
   cpu: ProcessorDetail,
@@ -23,51 +23,48 @@ const componentMap = {
 
 <template>
   <div>
-    <div v-if="sold.length > 0" class="my-5">
-      <h2 class="text-slate-400 font-semibold font-oswald text-sm uppercase mb-2">Recent</h2>
-      <div class="bg-slate-900 flex flex-wrap gap-4 justify-center mb-15 mt-5">
-        <div class="relative bg-slate-800/70 rounded-lg p-1 flex-grow text-slate-300 w-full md:w-5/12 lg:w-3/12"
-          v-for="item in sold" 
-        >
-          <component
-            :is="componentMap[item.category]" 
-            :item="item"
-            :key="item.id"
-            v-bind="item"
-          />
-        </div>
-      </div>
-    </div>
-
-    <h2 class="text-slate-400 font-semibold font-oswald text-sm uppercase mt-4">Records</h2>
-
     <div v-for="record in monthlyAggregates" class="my-8">
-      <div class="flex justify-between items-center mb-3">
+      <div class="flex justify-between items-center mb-2">
         <h2 class="text-slate-400 text-xs font-inter font-normal">{{ record.month }}</h2>
 
         <div class="flex justify-between items-center">
-          <span class="text-slate-400 text-xs font-inter font-semibold mr-1">{{ formattedAmount(record.totalSales) }}</span>
-          <span class="ml-1 flex justify-center text-xs items-center bg-slate-800/70 p-2 min-w-8 h-5 rounded-full text-slate-400 text-xs font-inter font-normal">
-            {{ record.items.length }}
-          </span>
+          <span class="text-slate-400 text-xs font-inter font-semibold mr-1">{{ formattedAmount(record.profit) }}</span>
         </div>
       </div>
+      
+      <!-- Progress Bar -->
+      <div class="relative w-full overflow-hidden flex h-5 bg-slate-400 shadow-inner mb-2 rounded-lg">
+        <div 
+          :style="{ backgroundColor: record.percentageColor, width: record.percentageWidth }"
+          class="absolute inset-0 w-full transition-all duration-500 ease-out flex items-center justify-center text-xs font-semibold text-white truncate"
+        >
+            <!-- <span>label</span> -->
+        </div>
 
-      <div class="flex h-1 bg-slate-400 shadow-inner mb-4 rounded-lg">
-        <div :style="{ backgroundColor: record.percentageColor, width: record.percentageWidth, transition: `width 0.5s ease, background-color 0.5s ease` }" class="rounded-lg"></div>
+        <div class="absolute w-full flex justify-center items-center text-slate-300 text-xs font-inter font-normal">
+          <span class="flex justify-center items-center font-semibold min-w-8 h-5 rounded-full">{{ record.margin.toFixed(0) }}%</span>
+          <span class="ml-1 mr-2 italic">of</span>
+          <span class="mr-1">{{ formattedAmount(record.revenue) }}</span>
+        </div>
+        <div 
+          :style="{ width: record.marginWidth }"
+          class="bg-purple-800 z-99 absolute inset-0 w-full transition-all duration-500 ease-out flex items-center justify-center text-xs font-semibold text-white truncate"
+        >
+            <!-- <span>label</span> -->
+        </div>
       </div>
-
-      <div class="bg-slate-900 flex flex-wrap gap-4 justify-center">
+      
+      <div class="bg-slate-900 flex flex-wrap gap-4 justify-center mt-4">
         <div v-for="item in record.items" class="relative bg-slate-800/70 rounded-lg p-1 flex-grow text-slate-300 w-full md:w-5/12 lg:w-3/12" >
           <component
             :is="componentMap[item.category]" 
+            :page="'sold'"
             :item="item"
             :key="item.id"
             v-bind="item"
           />
         </div>
       </div>
-
     </div>
   </div> 
 </template>
