@@ -42,6 +42,21 @@ export const useDiskStore = defineStore('disk', () => {
     });
   });
 
+  const purchasedDisks = computed(() => {
+    const disks = diskRepo.query().where((disk) => disk.dop !== '' && disk.dop !== null).with('micro').get();
+
+    return disks.map(disk => {
+      const totalExpenses = (disk.shippingCost === '' ? 0 : disk.shippingCost) + (disk.costOfGoods === '' ? 0 : disk.costOfGoods);
+      const profit = (disk.salesPrice || disk.subPrice + disk.shippingCollected) - totalExpenses;
+
+      return {
+        ...disk,
+        totalExpenses,
+        profit,
+      }
+    });
+  });
+
   const filteredDisks = computed(() => {
     let filtered = [];
 
@@ -161,7 +176,7 @@ export const useDiskStore = defineStore('disk', () => {
     // state
     capacity, rpm, sortBy,
     // getters
-    availableDisks, spareDisks, installedDisks, soldDisks, filteredDisks, filteredInstalledDisks, rpms, rpmCount, capacities, groups,
+    availableDisks, spareDisks, installedDisks, purchasedDisks, soldDisks, filteredDisks, filteredInstalledDisks, rpms, rpmCount, capacities, groups,
     // actions
   }
 

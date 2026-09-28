@@ -69,6 +69,21 @@ export const useProcessorStore = defineStore('processor', () => {
     });
   });
 
+  const purchasedProcessors = computed(() => {
+    const processors = processorRepo.query().where((processor) => processor.dop !== '' && processor.dop !== null).with('micro').get();
+
+    return processors.map(processor => {
+      const totalExpenses = (processor.shippingCost === '' ? 0 : processor.shippingCost) + (processor.costOfGoods === '' ? 0 : processor.costOfGoods);
+      const profit = (processor.salesPrice || processor.subPrice + processor.shippingCollected) - totalExpenses;
+
+      return {
+        ...processor,
+        totalExpenses,
+        profit,
+      }
+    });
+  });
+
   const filteredProcessors = computed(() => {
     let filtered = [];
 
@@ -165,7 +180,7 @@ export const useProcessorStore = defineStore('processor', () => {
     // state
     gen, brand, sortBy,
     // getters
-    availableProcessors, spareProcessors, installedProcessors, soldProcessors, filteredProcessors, filteredInstalledProcessors, brands, brandCount, groups,
+    availableProcessors, spareProcessors, installedProcessors, purchasedProcessors, soldProcessors, filteredProcessors, filteredInstalledProcessors, brands, brandCount, groups,
     // actions
   }
 

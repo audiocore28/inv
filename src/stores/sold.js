@@ -19,6 +19,15 @@ export const useSoldStore = defineStore('sold', () => {
   const quota = ref(5000);
 
   // --- Getters ---------------------------------------------
+  const purchasedItems = computed(() => {
+    return [
+      ...processorStore.purchasedProcessors,
+      ...memoryStore.purchasedMemories,
+      ...solidStore.purchasedSolids,
+      ...diskStore.purchasedDisks,
+    ].sort((a, b) => new Date(b.dop) - new Date(a.dop));
+  });
+
   const soldItems = computed(() => {
     return [
       ...microStore.soldMicros,
@@ -40,6 +49,54 @@ export const useSoldStore = defineStore('sold', () => {
     });
 
     return filtered.length;
+  });
+
+  const monthlyPurchases = computed(() => {
+
+    const purchases = purchasedItems.value.reduce((acc, purchase) => {
+      const month = new Date(purchase.dop).toLocaleString("en-PH", { month: "long", year: "numeric" });
+
+      if (!acc[month]) {
+        acc[month] = {
+          expenses: 0,
+          profit: 0,
+          items: []
+        }
+      }
+
+      // Accumulate purchases and items
+      acc[month].expenses += purchase.totalExpenses || 0;
+      acc[month].profit += purchase.profit || 0;
+      acc[month].items.push(purchase);
+
+      return acc;
+    }, {});
+
+    const mapped = Object.keys(purchases).map(month => {
+      const data = purchases[month];
+      const roi = (data.profit / data.expenses) * 100;
+
+      let percentageColor;
+      if (roi >= 25) {
+        percentageColor = '#16a34a';
+      } else if (roi >= 15) {
+        percentageColor = '#eab308';
+      } else {
+        percentageColor = '#ef4444';
+      }
+
+      return {
+        month,
+        expenses: data.expenses,
+        profit: data.profit,
+        roi,
+        items: data.items,
+        percentageWidth: `${roi}%`,
+        percentageColor
+      };
+    });
+
+    return mapped;
   });
 
 
@@ -106,7 +163,7 @@ export const useSoldStore = defineStore('sold', () => {
     // state
     sold, soldItems,
     //getters
-    monthlyAggregates, currentMonthCount,
+    monthlyPurchases, monthlyAggregates, currentMonthCount,
     // actions
     toggleSold
   }

@@ -68,6 +68,21 @@ export const useMemoryStore = defineStore('memory', () => {
     });
   });
 
+  const purchasedMemories = computed(() => {
+    const memories = memoryRepo.query().where((memory) => memory.dop !== '' && memory.dop !== null).with('micro').get();
+
+    return memories.map(memory => {
+      const totalExpenses = (memory.shippingCost === '' ? 0 : memory.shippingCost) + (memory.costOfGoods === '' ? 0 : memory.costOfGoods);
+      const profit = (memory.salesPrice || memory.subPrice + memory.shippingCollected) - totalExpenses;
+
+      return {
+        ...memory,
+        totalExpenses,
+        profit,
+      }
+    });
+  });
+
   const filteredMemories = computed(() => {
     let filtered = [];
 
@@ -164,7 +179,7 @@ export const useMemoryStore = defineStore('memory', () => {
     // state
     capacity, speed, sortBy,
     // getters
-    availableMemories, spareMemories, installedMemories, soldMemories, speeds, speedCount, filteredMemories, filteredInstalledMemories, groups,
+    availableMemories, spareMemories, installedMemories, purchasedMemories, soldMemories, speeds, speedCount, filteredMemories, filteredInstalledMemories, groups,
     // actions
   }
 

@@ -9,6 +9,7 @@ export default class Memory extends Model {
   static fields () {
     return {
       id: this.uid(),
+      dop: this.attr(''),
       capacity: this.attr(0),
       gen: this.attr(''),
       speed: this.attr(0),
@@ -19,6 +20,7 @@ export default class Memory extends Model {
       available: this.boolean(false),
       microId: this.attr(null),
       date: this.attr(),
+      subPrice: this.attr(0),
       salesPrice: this.attr(0),
       shippingCollected: this.attr(0),
       shippingCost: this.attr(0),

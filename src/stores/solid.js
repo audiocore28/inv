@@ -42,6 +42,21 @@ export const useSolidStore = defineStore('solid', () => {
     });
   });
 
+  const purchasedSolids = computed(() => {
+    const solids = solidRepo.query().where((solid) => solid.dop !== '' && solid.dop !== null).with('micro').get();
+
+    return solids.map(solid => {
+      const totalExpenses = (solid.shippingCost === '' ? 0 : solid.shippingCost) + (solid.costOfGoods === '' ? 0 : solid.costOfGoods);
+      const profit = (solid.salesPrice || solid.subPrice + solid.shippingCollected) - totalExpenses;
+
+      return {
+        ...solid,
+        totalExpenses,
+        profit,
+      }
+    });
+  });
+
   const filteredSolids = computed(() => {
     let filtered = [];
 
@@ -138,7 +153,7 @@ export const useSolidStore = defineStore('solid', () => {
     // state
     capacity, formInterface, sortBy,
     // getters
-    availableSolids, spareSolids, installedSolids, soldSolids, filteredSolids, filteredInstalledSolids, formInterfaces, formInterfaceCount, groups,
+    availableSolids, spareSolids, installedSolids, purchasedSolids, soldSolids, filteredSolids, filteredInstalledSolids, formInterfaces, formInterfaceCount, groups,
     // actions
   }
 

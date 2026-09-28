@@ -9,6 +9,7 @@ export default class Processor extends Model {
   static fields () {
     return {
       id: this.uid(),
+      dop: this.attr(''),
       brand: this.attr(''),
       series: this.attr(''),
       tier: this.attr(''),
@@ -22,6 +23,7 @@ export default class Processor extends Model {
       available: this.boolean(false),
       microId: this.attr(null),
       date: this.attr(),
+      subPrice: this.attr(0),
       salesPrice: this.attr(0),
       shippingCollected: this.attr(0),
       shippingCost: this.attr(0),
