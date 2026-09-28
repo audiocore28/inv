@@ -9,19 +9,24 @@ const props = defineProps({
   item: {
     type: Object,
   },
+  page: {
+    type: String,
+  },
 });
 
 </script>
 
 <template>
   <div 
-    class="border border-1 rounded-lg"
+    class="relative border border-1 rounded-lg"
     :class="{
       'border-sky-800' : item.brand === 'dell',
       'border-red-800' : item.brand === 'lenovo',
       'border-gray-500' : item.brand === 'hp',
     }"
   >
+    <!-- overlay -->
+    <div v-if="!item.available" class="absolute w-full h-full bg-slate-900/70 rounded-sm p-2 z-300"></div>
 
     <div class="flex flex-col gap-4 text-slate-500 py-2">
       <span class="font-oswald uppercase inline-flex items-center gap-1 px-2 text-xs font-medium rounded-md transition-colors duration-200">
@@ -57,7 +62,8 @@ const props = defineProps({
         </div>
 
       </div>
-      <h4 v-if="!item.available" class="text-[11px] text-slate-500 font-inter">{{ formattedAmount(item.profit) }}</h4>
+      <h4 v-if="page === 'sold' && !item.available" class="text-[11px] text-slate-500 font-inter">{{ formattedAmount(item.profit) }}</h4>
+      <h4 v-if="page === 'purchased'" class="text-[11px] text-slate-500 font-inter">{{ formattedAmount(item.salesPrice) || formattedAmount(item.subPrice) }}</h4>
     </div>
   
     <div @click.prevent="soldStore.toggleSold(item)" v-if="item.available" class="absolute top-2 right-7">
