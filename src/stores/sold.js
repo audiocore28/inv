@@ -5,6 +5,9 @@ import { useProcessorStore } from '../stores/processor';
 import { useMemoryStore } from '../stores/memory';
 import { useSolidStore } from '../stores/solid';
 import { useDiskStore } from '../stores/disk';
+import { useModalStore } from '../stores/modal';
+import OrderForm from '../components/OrderForm.vue';
+import OrderList from '../components/OrderList.vue';
 
 export const useSoldStore = defineStore('sold', () => {
   const microStore = useMicroStore();
@@ -12,11 +15,24 @@ export const useSoldStore = defineStore('sold', () => {
   const memoryStore = useMemoryStore();
   const solidStore = useSolidStore();
   const diskStore = useDiskStore();
+  const modalStore = useModalStore();
 
   // --- State ---------------------------------------------
 
   const sold = ref([]);
   const quota = ref(25000);
+
+  const orders = ref([]);
+  const isEditingOrder = ref(false);
+  const currentOrder = ref({
+    name: '',
+    sellingPrice: 0,
+    date: '',
+    time: '',
+    location: '',
+    cart: [],
+  });
+  const currentOrderIndex = ref(-1);
 
   // --- Getters ---------------------------------------------
   const purchasedItems = computed(() => {
@@ -49,6 +65,22 @@ export const useSoldStore = defineStore('sold', () => {
     });
 
     return filtered.length;
+  });
+
+  const orderList = computed(() => {
+    return orders.value.map(order => {
+      const totalExpenses = order.cart.reduce((sum, item) => sum + (item.totalCost || 0), 0);
+      const totalProfit = order.sellingPrice - totalExpenses;
+      const percentage = (order.sellingPrice > totalExpenses) ? (totalProfit / order.sellingPrice) * 100 : 0;
+
+      return {
+        ...order,
+        totalExpenses,
+        totalProfit,
+        percentageWidth: `${percentage.toFixed(0)}%`
+      };
+    });
+
   });
 
   const monthlyPurchases = computed(() => {
@@ -166,17 +198,95 @@ export const useSoldStore = defineStore('sold', () => {
     }
   }
 
+  function toggleOrder(item, orderIndex) {
+    const order = orders.value[orderIndex];
+    const index = order.cart.findIndex(i => i.id === item.id);
+
+    if (index > -1) {
+      order.cart.splice(index, 1);
+    } else {
+      if (item.available) {
+        order.cart.unshift(item);
+      }
+    }
+  }
+
+
+  const handleOrder = () => {
+     if (isEditingOrder.value) {        
+      // Update existing item logic      
+      if (currentOrderIndex.value > -1) {
+        orders.value[currentOrderIndex.value] = { ...currentOrder.value };
+      }
+
+      // Reset the form fields
+      resetOrder();
+      isEditingOrder.value = false;
+
+      } else {        
+        // Add new item logic      
+
+        // Validate that fields aren't empty
+        if (!currentOrder.value.name) return;
+    
+        // Use the spread operator {...} to clone the object. 
+        // This breaks the reference so future typing doesn't overwrite past entries.
+        orders.value.push({ ...currentOrder.value });
+    
+        // Reset the form fields
+        resetOrder();
+      }
+
+  }
+
+  const resetOrder = () => {
+    currentOrder.value.name = '';
+    currentOrder.value.sellingPrice = 0;
+    currentOrder.value.date = '';
+    currentOrder.value.time = '';
+    currentOrder.value.location = '';
+    currentOrder.value.cart = [];
+  }
+  
+  function removeOrder(index) {
+    const isConfirmed = window.confirm("Are you sure you want to remove this order?");
+    if (!isConfirmed) return;
+
+    if (index > -1 && index < orders.value.length) {
+      orders.value.splice(index, 1);
+    }
+  }
+
+  function openOrderForm(order = null, index = -1) {
+    if (order) {
+      isEditingOrder.value = true;
+      currentOrder.value = { ...order }; // Create a copy of the order to avoid mutating the original
+      currentOrderIndex.value = index; // Store the index of the order being edited
+      // currentOrder.value = order; // Directly assign the order to currentOrder
+      modalStore.openAlert(OrderForm);
+    } else {
+      resetOrder();
+      isEditingOrder.value = false;
+      modalStore.openAlert(OrderForm);
+    }
+  }
+
+  function openOrderList(item) {
+    modalStore.openAlert(OrderList, { item });
+  }
+
+
   return {
     // state
-    sold, soldItems,
+    sold, orders, isEditingOrder, soldItems, currentOrder,
     //getters
-    monthlyPurchases, monthlyAggregates, currentMonthCount,
+    orderList, monthlyPurchases, monthlyAggregates, currentMonthCount,
     // actions
-    toggleSold
+    toggleSold, toggleOrder, handleOrder, resetOrder, removeOrder, openOrderForm, openOrderList
   }
 
 }, {
   persist: {
-    pick: ['sold'] // Specify only the fields you want to save to localStorage
+    pick: ['sold', 'orders'] // Specify only the fields you want to save to localStorage
   }
 });

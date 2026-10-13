@@ -2,6 +2,7 @@
 import { onMounted } from 'vue';
 import { useDataStore } from './stores/data.js';
 import Sidebar from './components/Sidebar.vue';
+import Overlay from './components/Overlay.vue';
 
 const dataStore = useDataStore();
 
@@ -21,4 +22,5 @@ onMounted(() => {
 
     </template>
   </Sidebar>
+  <Overlay />
 </template>

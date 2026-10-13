@@ -18,7 +18,20 @@ export const useProcessorStore = defineStore('processor', () => {
     brand.value = newParams.category;
   });
 
-  const availableProcessors = computed(() => processorRepo.query().where('available', true).withAll().get());
+  const availableProcessors = computed(() => {
+    const processors = processorRepo.query().where('available', true).withAll().get();
+
+    return processors.map(processor => {
+      const totalCost = (processor.shippingCost === '' ? 0 : processor.shippingCost) + (processor.costOfGoods === '' ? 0 : processor.costOfGoods);
+      const profit = (processor.salesPrice + processor.shippingCollected) - totalCost;
+
+      return {
+        ...processor,
+        totalCost,
+        profit,
+      }
+    });
+  });
 
   const spareProcessors = computed(() => {
     const filtered = processorRepo.query().whereDoesntHave('micro').where('available', true).get();
@@ -186,6 +199,6 @@ export const useProcessorStore = defineStore('processor', () => {
 
 }, {
   persist: {
-    pick: ['filteredProcessors', 'gen'] // Specify only the fields you want to save to localStorage
+    pick: ['availableProcessors', 'filteredProcessors', 'gen'] // Specify only the fields you want to save to localStorage
   }
 });

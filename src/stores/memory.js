@@ -18,7 +18,19 @@ export const useMemoryStore = defineStore('memory', () => {
     speed.value = newParams.category;
   });
 
-  const availableMemories = computed(() => memoryRepo.query().where('available', true).withAll().get());
+  const availableMemories = computed(() => {
+    const memories = memoryRepo.query().where('available', true).withAll().get();
+
+    return memories.map(memory => {
+      const totalCost = (memory.shippingCost === '' ? 0 : memory.shippingCost) + (memory.costOfGoods === '' ? 0 : memory.costOfGoods);
+      const profit = (memory.salesPrice + memory.shippingCollected) - totalCost;
+      return {
+        ...memory,
+        totalCost,
+        profit,
+      }
+    });
+  });
 
   const spareMemories = computed(() => {
     const filtered = memoryRepo.query().whereDoesntHave('micro').where('available', true).get();
@@ -185,6 +197,6 @@ export const useMemoryStore = defineStore('memory', () => {
 
 }, {
   persist: {
-    pick: ['filteredMemories', 'capacity'] // Specify only the fields you want to save to localStorage
+    pick: ['availableMemories', 'filteredMemories', 'capacity'] // Specify only the fields you want to save to localStorage
   }
 });

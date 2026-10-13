@@ -18,7 +18,26 @@ export const useMicroStore = defineStore('micro', () => {
     brand.value = newParams.category;
   });
 
-  const availableMicros = computed(() => microRepo.query().where('available', true).withAll().get());
+  const availableMicros = computed(() => {
+    const micros = microRepo.query().where('available', true).withAll().get();
+
+    return micros.map(micro => {
+      const bareboneCost = (micro.shippingCost === '' ? 0 : micro.shippingCost) + (micro.costOfGoods === '' ? 0 : micro.costOfGoods);
+      const processorCost = micro.processors ? (micro.processors.shippingCost === '' ? 0 : micro.processors.shippingCost) + (micro.processors.costOfGoods === '' ? 0 : micro.processors.costOfGoods) : 0;
+      const memoryCost = micro.memories?.reduce((acc, memory) => acc + (memory.shippingCost === '' ? 0 : memory.shippingCost) + (memory.costOfGoods === '' ? 0 : memory.costOfGoods), 0);
+      const solidCost = micro.solids?.reduce((acc, solid) => acc + (solid.shippingCost === '' ? 0 : solid.shippingCost) + (solid.costOfGoods === '' ? 0 : solid.costOfGoods) , 0);
+      const diskCost = micro.disks ? (micro.disks.shippingCost === '' ? 0 : micro.disks.shippingCost ) + (micro.disks.costOfGoods === '' ? 0 : micro.disks.costOfGoods) : 0;
+
+      const totalCost = bareboneCost + processorCost + memoryCost + solidCost + diskCost;
+      const profit = (micro.salesPrice + micro.shippingCollected) - totalCost;
+
+      return {
+        ...micro,
+        totalCost,
+        profit,
+      }
+    });
+  });
 
   const soldMicros = computed(() => {
     const micros = microRepo.query().where('available', false).withAll().get();
@@ -116,6 +135,6 @@ export const useMicroStore = defineStore('micro', () => {
 
 }, {
   persist: {
-    pick: ['filteredMicros', 'brand'] // Specify only the fields you want to save to localStorage
+    pick: ['availableMicros', 'filteredMicros', 'brand'] // Specify only the fields you want to save to localStorage
   }
 });

@@ -19,7 +19,20 @@ export const useDiskStore = defineStore('disk', () => {
     rpm.value = newParams.category;
   });
 
-  const availableDisks = computed(() => diskRepo.query().where('available', true).withAll().get());
+  const availableDisks = computed(() => {
+    const disks = diskRepo.query().where('available', true).withAll().get();
+
+    return disks.map(disk => {
+      const totalCost = (disk.shippingCost === '' ? 0 : disk.shippingCost) + (disk.costOfGoods === '' ? 0 : disk.costOfGoods);
+      const profit = (disk.salesPrice + disk.shippingCollected) - totalCost;
+
+      return {
+        ...disk,
+        totalCost,
+        profit,
+      }
+    });
+  });
 
   const spareDisks = computed(() => diskRepo.query().whereDoesntHave('micro').where('available', true).get());
 
@@ -182,6 +195,6 @@ export const useDiskStore = defineStore('disk', () => {
 
 }, {
   persist: {
-    pick: ['filteredDisks', 'capacity'] // Specify only the fields you want to save to localStorage
+    pick: ['availableDisks', 'filteredDisks', 'capacity'] // Specify only the fields you want to save to localStorage
   }
 });

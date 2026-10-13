@@ -19,7 +19,20 @@ export const useSolidStore = defineStore('solid', () => {
     formInterface.value = newParams.category;
   });
 
-  const availableSolids = computed(() => solidRepo.query().where('available', true).withAll().get());
+  const availableSolids = computed(() => {
+    const solids = solidRepo.query().where('available', true).withAll().get();
+
+    return solids.map(solid => {
+      const totalCost = (solid.shippingCost === '' ? 0 : solid.shippingCost) + (solid.costOfGoods === '' ? 0 : solid.costOfGoods);
+      const profit = (solid.salesPrice + solid.shippingCollected) - totalCost;
+
+      return {
+        ...solid,
+        totalCost,
+        profit,
+      }
+    });
+  });
 
   const spareSolids = computed(() => solidRepo.query().whereDoesntHave('micro').where('available', true).get());
 
@@ -159,6 +172,6 @@ export const useSolidStore = defineStore('solid', () => {
 
 }, {
   persist: {
-    pick: ['filteredSolids', 'capacity'] // Specify only the fields you want to save to localStorage
+    pick: ['availableSolids', 'filteredSolids', 'capacity'] // Specify only the fields you want to save to localStorage
   }
 });

@@ -2,10 +2,12 @@
 import { ref } from 'vue';
 import Sold from '@/components/Sold.vue';
 import Purchased from '@/components/Purchased.vue';
+import Orders from '@/components/Orders.vue';
 import Priority from '@/components/Priority.vue';
 
-const currentTab = ref('sales');
+const currentTab = ref('orders');
 const tabs = {
+  orders: Orders,
   sales: Sold,
   purchases: Purchased,
   priority: Priority
