@@ -19,20 +19,7 @@ export const useDiskStore = defineStore('disk', () => {
     rpm.value = newParams.category;
   });
 
-  const availableDisks = computed(() => {
-    const disks = diskRepo.query().where('available', true).withAll().get();
-
-    return disks.map(disk => {
-      const totalCost = (disk.shippingCost === '' ? 0 : disk.shippingCost) + (disk.costOfGoods === '' ? 0 : disk.costOfGoods);
-      const profit = (disk.salesPrice + disk.shippingCollected) - totalCost;
-
-      return {
-        ...disk,
-        totalCost,
-        profit,
-      }
-    });
-  });
+  const availableDisks = computed(() => diskRepo.query().where('available', true).withAll().get());
 
   const spareDisks = computed(() => diskRepo.query().whereDoesntHave('micro').where('available', true).get());
 
@@ -40,35 +27,9 @@ export const useDiskStore = defineStore('disk', () => {
     query.where('available', true);
   }).where('available', true).with('micro').get());
 
-  const soldDisks = computed(() => {
-    const disks = diskRepo.query().where('available', false).withAll().get();
+  const soldDisks = computed(() => diskRepo.query().where('available', false).withAll().get());
 
-    return disks.map(disk => {
-      const totalCost = (disk.shippingCost === '' ? 0 : disk.shippingCost) + (disk.costOfGoods === '' ? 0 : disk.costOfGoods);
-      const profit = (disk.salesPrice + disk.shippingCollected) - totalCost;
-
-      return {
-        ...disk,
-        totalCost,
-        profit,
-      }
-    });
-  });
-
-  const purchasedDisks = computed(() => {
-    const disks = diskRepo.query().where((disk) => disk.dop !== '' && disk.dop !== null).with('micro').get();
-
-    return disks.map(disk => {
-      const totalExpenses = (disk.shippingCost === '' ? 0 : disk.shippingCost) + (disk.costOfGoods === '' ? 0 : disk.costOfGoods);
-      const profit = (disk.salesPrice || disk.subPrice + disk.shippingCollected) - totalExpenses;
-
-      return {
-        ...disk,
-        totalExpenses,
-        profit,
-      }
-    });
-  });
+  const purchasedDisks = computed(() => diskRepo.query().where((disk) => disk.dop !== '' && disk.dop !== null).with('micro').get());
 
   const filteredDisks = computed(() => {
     let filtered = [];

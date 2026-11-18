@@ -50,7 +50,7 @@ const componentMap = {
 
         <div class="flex justify-end items-center mb-3">
           <div class="flex justify-between items-center">
-            <span class="text-red-500/40 text-xs font-inter font-semibold mr-1">- {{ formattedAmount(order.totalExpenses) }}</span>
+            <span class="text-red-500/40 text-xs font-inter font-semibold mr-1">- {{ formattedAmount(order.totalCost) }}</span>
           </div>
         </div>
 

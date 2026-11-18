@@ -37,6 +37,7 @@ export const useSoldStore = defineStore('sold', () => {
   // --- Getters ---------------------------------------------
   const purchasedItems = computed(() => {
     return [
+      ...microStore.purchasedMicros,
       ...processorStore.purchasedProcessors,
       ...memoryStore.purchasedMemories,
       ...solidStore.purchasedSolids,
@@ -69,13 +70,13 @@ export const useSoldStore = defineStore('sold', () => {
 
   const orderList = computed(() => {
     return orders.value.map(order => {
-      const totalExpenses = order.cart.reduce((sum, item) => sum + (item.totalCost || 0), 0);
-      const totalProfit = order.sellingPrice - totalExpenses;
-      const percentage = (order.sellingPrice > totalExpenses) ? (totalProfit / order.sellingPrice) * 100 : 0;
+      const totalCost = order.cart.reduce((sum, item) => sum + (item.totalCost || 0), 0);
+      const totalProfit = order.sellingPrice - totalCost;
+      const percentage = (order.sellingPrice > totalCost) ? (totalProfit / order.sellingPrice) * 100 : 0;
 
       return {
         ...order,
-        totalExpenses,
+        totalCost,
         totalProfit,
         percentageWidth: `${percentage.toFixed(0)}%`
       };
@@ -90,14 +91,14 @@ export const useSoldStore = defineStore('sold', () => {
 
       if (!acc[month]) {
         acc[month] = {
-          expenses: 0,
+          totalCost: 0,
           profit: 0,
           items: []
         }
       }
 
       // Accumulate purchases and items
-      acc[month].expenses += purchase.totalExpenses || 0;
+      acc[month].totalCost += purchase.totalCost || 0;
       acc[month].profit += purchase.profit || 0;
       acc[month].items.push(purchase);
 
@@ -106,7 +107,7 @@ export const useSoldStore = defineStore('sold', () => {
 
     const mapped = Object.keys(purchases).map(month => {
       const data = purchases[month];
-      const roi = (data.profit / data.expenses) * 100;
+      const roi = (data.profit / data.totalCost) * 100;
 
       let percentageColor;
       if (roi >= 25) {
@@ -119,7 +120,7 @@ export const useSoldStore = defineStore('sold', () => {
 
       return {
         month,
-        expenses: data.expenses,
+        totalCost: data.totalCost,
         profit: data.profit,
         roi,
         items: data.items,

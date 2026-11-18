@@ -18,20 +18,7 @@ export const useProcessorStore = defineStore('processor', () => {
     brand.value = newParams.category;
   });
 
-  const availableProcessors = computed(() => {
-    const processors = processorRepo.query().where('available', true).withAll().get();
-
-    return processors.map(processor => {
-      const totalCost = (processor.shippingCost === '' ? 0 : processor.shippingCost) + (processor.costOfGoods === '' ? 0 : processor.costOfGoods);
-      const profit = (processor.salesPrice + processor.shippingCollected) - totalCost;
-
-      return {
-        ...processor,
-        totalCost,
-        profit,
-      }
-    });
-  });
+  const availableProcessors = computed(() => processorRepo.query().where('available', true).withAll().get());
 
   const spareProcessors = computed(() => {
     const filtered = processorRepo.query().whereDoesntHave('micro').where('available', true).get();
@@ -67,35 +54,9 @@ export const useProcessorStore = defineStore('processor', () => {
     query.where('available', true);
   }).where('available', true).with('micro').get());
 
-  const soldProcessors = computed(() => {
-    const processors = processorRepo.query().where('available', false).withAll().get();
+  const soldProcessors = computed(() => processorRepo.query().where('available', false).withAll().get());
 
-    return processors.map(processor => {
-      const totalCost = (processor.shippingCost === '' ? 0 : processor.shippingCost) + (processor.costOfGoods === '' ? 0 : processor.costOfGoods);
-      const profit = (processor.salesPrice + processor.shippingCollected) - totalCost;
-
-      return {
-        ...processor,
-        totalCost,
-        profit,
-      }
-    });
-  });
-
-  const purchasedProcessors = computed(() => {
-    const processors = processorRepo.query().where((processor) => processor.dop !== '' && processor.dop !== null).with('micro').get();
-
-    return processors.map(processor => {
-      const totalExpenses = (processor.shippingCost === '' ? 0 : processor.shippingCost) + (processor.costOfGoods === '' ? 0 : processor.costOfGoods);
-      const profit = (processor.salesPrice || processor.subPrice + processor.shippingCollected) - totalExpenses;
-
-      return {
-        ...processor,
-        totalExpenses,
-        profit,
-      }
-    });
-  });
+  const purchasedProcessors = computed(() => processorRepo.query().where((processor) => processor.dop !== '' && processor.dop !== null).with('micro').get());
 
   const filteredProcessors = computed(() => {
     let filtered = [];

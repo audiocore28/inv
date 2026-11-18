@@ -18,7 +18,7 @@ const itemCosts = computed(() => {
       }
     }
 
-    acc[cat].value += item.totalExpenses;
+    acc[cat].value += item.totalCost;
 
     return acc;
   }, {});
@@ -35,6 +35,7 @@ const itemCosts = computed(() => {
         :key="category"
         :style="{ width: `${cost.value}%` }"
         :class="{
+          'bg-sky-600': category === 'micro',
           'bg-amber-600': category === 'hdd',
           'bg-lime-500': category === 'ram',
           'bg-yellow-500': category === 'ssd',

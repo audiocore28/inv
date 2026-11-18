@@ -19,20 +19,7 @@ export const useSolidStore = defineStore('solid', () => {
     formInterface.value = newParams.category;
   });
 
-  const availableSolids = computed(() => {
-    const solids = solidRepo.query().where('available', true).withAll().get();
-
-    return solids.map(solid => {
-      const totalCost = (solid.shippingCost === '' ? 0 : solid.shippingCost) + (solid.costOfGoods === '' ? 0 : solid.costOfGoods);
-      const profit = (solid.salesPrice + solid.shippingCollected) - totalCost;
-
-      return {
-        ...solid,
-        totalCost,
-        profit,
-      }
-    });
-  });
+  const availableSolids = computed(() => solidRepo.query().where('available', true).withAll().get());
 
   const spareSolids = computed(() => solidRepo.query().whereDoesntHave('micro').where('available', true).get());
 
@@ -40,35 +27,9 @@ export const useSolidStore = defineStore('solid', () => {
     query.where('available', true);
   }).where('available', true).with('micro').get());
 
-  const soldSolids = computed(() => {
-    const solids = solidRepo.query().where('available', false).withAll().get();
+  const soldSolids = computed(() => solidRepo.query().where('available', false).withAll().get());
 
-    return solids.map(solid => {
-      const totalCost = (solid.shippingCost === '' ? 0 : solid.shippingCost) + (solid.costOfGoods === '' ? 0 : solid.costOfGoods);
-      const profit = (solid.salesPrice + solid.shippingCollected) - totalCost;
-
-      return {
-        ...solid,
-        totalCost,
-        profit,
-      }
-    });
-  });
-
-  const purchasedSolids = computed(() => {
-    const solids = solidRepo.query().where((solid) => solid.dop !== '' && solid.dop !== null).with('micro').get();
-
-    return solids.map(solid => {
-      const totalExpenses = (solid.shippingCost === '' ? 0 : solid.shippingCost) + (solid.costOfGoods === '' ? 0 : solid.costOfGoods);
-      const profit = (solid.salesPrice || solid.subPrice + solid.shippingCollected) - totalExpenses;
-
-      return {
-        ...solid,
-        totalExpenses,
-        profit,
-      }
-    });
-  });
+  const purchasedSolids = computed(() => solidRepo.query().where((solid) => solid.dop !== '' && solid.dop !== null).with('micro').get());
 
   const filteredSolids = computed(() => {
     let filtered = [];

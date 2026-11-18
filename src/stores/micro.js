@@ -3,6 +3,8 @@ import { defineStore } from 'pinia';
 import { useRepo } from 'pinia-orm';
 import { useRoute } from 'vue-router';
 import Micro from '../models/Micro';
+import { formatSize, capitalize } from '../utils/format';
+import { calculateTotalCost, calculateProfit } from '../utils/calculate';
 
 export const useMicroStore = defineStore('micro', () => {
   const microRepo = useRepo(Micro);
@@ -18,15 +20,99 @@ export const useMicroStore = defineStore('micro', () => {
     brand.value = newParams.category;
   });
 
-  const availableMicros = computed(() => {
+  const microSpecs = computed(() => {
     const micros = microRepo.query().where('available', true).withAll().get();
 
-    return micros.map(micro => {
-      const bareboneCost = (micro.shippingCost === '' ? 0 : micro.shippingCost) + (micro.costOfGoods === '' ? 0 : micro.costOfGoods);
-      const processorCost = micro.processors ? (micro.processors.shippingCost === '' ? 0 : micro.processors.shippingCost) + (micro.processors.costOfGoods === '' ? 0 : micro.processors.costOfGoods) : 0;
-      const memoryCost = micro.memories?.reduce((acc, memory) => acc + (memory.shippingCost === '' ? 0 : memory.shippingCost) + (memory.costOfGoods === '' ? 0 : memory.costOfGoods), 0);
-      const solidCost = micro.solids?.reduce((acc, solid) => acc + (solid.shippingCost === '' ? 0 : solid.shippingCost) + (solid.costOfGoods === '' ? 0 : solid.costOfGoods) , 0);
-      const diskCost = micro.disks ? (micro.disks.shippingCost === '' ? 0 : micro.disks.shippingCost ) + (micro.disks.costOfGoods === '' ? 0 : micro.disks.costOfGoods) : 0;
+    const enrichedMicros = micros.map(micro => {
+      let cpu = micro.processors !== null ? `${capitalize(micro.processors.series)} ${micro.processors.tier} ${micro.processors.gen}th gen •` : '';
+      let cpuDesc = micro.processors !== null ? `${capitalize(micro.processors.desc)} (${micro.processors.gen}th gen - ${micro.processors.core}cores / ${micro.processors.thread}threads)` : '';
+
+      const ssd = () => {
+        if (micro.solids.length > 0) {
+          const capacity = micro.solids[0]?.capacity ? `${micro.solids[0]?.capacity}gb` : '';
+          const form = micro.solids[0]?.form === 'm.2' ? 'm.2' : '';
+          const connection = micro.solids[0]?.interface === 'nvme' ? 'NVMe •' : 'SSD •';
+          
+          return `${capacity} ${form} ${connection}`;
+        } else {
+          return '';
+        } 
+      }
+
+      const ram = () => {
+        if (micro.memories.length > 0) {
+          const totalCap = micro.memories.reduce((acc, ram) => acc + ram.capacity, 0);
+          
+          return `${totalCap}GB ${micro.memories[0]?.gen.toUpperCase() || 'RAM'} •`
+        } else {
+          return '';
+        }
+      }
+
+      let text = `${micro.isWifi ? 'WiFi Ready •' : ''} ${cpu} ${ssd()} ${ram()} ${micro.formFactor === 'micro' || micro.formFactor === 'mini' || micro.formFactor === 'tiny' ? 'Desktop Mini PC' : ''}
+
+${capitalize(micro.brand)} ${capitalize(micro.model)} ${micro.series} ${micro.formFactor}
+${micro.formFactor === 'micro' || micro.formFactor === 'mini' || micro.formFactor === 'tiny' ? 'Mini Desktop Computer' : ''}
+${micro.adapter > 90 ? '' : '• Power Efficient'}
+${micro.formFactor === 'micro' || micro.formFactor === 'mini' || micro.formFactor === 'tiny' ? '• Compact and Space-Saving' : ''}
+  `; 
+
+    text += `
+${cpuDesc}`;
+
+    micro.memories.forEach(memory => {
+      if (micro.memories.length === 1) {
+        text += `
+${memory.text} (slot used 1 of 2)`;
+      } else {
+        text += `
+${memory.text}`;
+      }
+    });
+
+    micro.solids.forEach(solid => {
+      if (solid.interface === 'nvme') {
+        text += `
+${solid.ssdDesc} (faster than 2.5" ssd)`;
+      } else {
+        text += `
+${solid.ssdDesc}`;
+      }
+    });
+
+      text += `
+${micro.disks?.desc || ''}`;
+
+    text += `
+${micro.isWifi ? 'Built-in WiFi' : ''}
+${micro.isTypeC ? 'USB Type-C' : ''}
+Display port
+${micro.isHdmi ? 'HDMI port' : ''}
+${micro.isLocked ? 'BIOS Locked' : ''}
+Windows 10 / 11 Pro (Digital License Activated)
+Microsoft Office
+
+Unit with orig ${capitalize(micro.brand)} ${micro.adapter}w power adapter`;
+
+      return {
+        ...micro,
+        text,
+      }
+
+    });
+
+    return enrichedMicros;
+
+  });
+
+  const availableMicros = computed(() => {
+
+    return microSpecs.value.map(micro => {
+      const bareboneCost = calculateTotalCost(micro);
+      const processorCost = micro.processors ? calculateTotalCost(micro.processors) : 0;
+      const memoryCost = micro.memories?.reduce((acc, memory) => acc + calculateTotalCost(memory), 0);
+      const solidCost = micro.solids?.reduce((acc, solid) => acc + calculateTotalCost(solid), 0);
+      const diskCost = micro.disks ? calculateTotalCost(micro.disks) : 0;
 
       const totalCost = bareboneCost + processorCost + memoryCost + solidCost + diskCost;
       const profit = (micro.salesPrice + micro.shippingCollected) - totalCost;
@@ -43,14 +129,29 @@ export const useMicroStore = defineStore('micro', () => {
     const micros = microRepo.query().where('available', false).withAll().get();
 
     return micros.map(micro => {
-      const bareboneCost = (micro.shippingCost === '' ? 0 : micro.shippingCost) + (micro.costOfGoods === '' ? 0 : micro.costOfGoods);
-      const processorCost = micro.processors ? (micro.processors.shippingCost === '' ? 0 : micro.processors.shippingCost) + (micro.processors.costOfGoods === '' ? 0 : micro.processors.costOfGoods) : 0;
-      const memoryCost = micro.memories?.reduce((acc, memory) => acc + (memory.shippingCost === '' ? 0 : memory.shippingCost) + (memory.costOfGoods === '' ? 0 : memory.costOfGoods), 0);
-      const solidCost = micro.solids?.reduce((acc, solid) => acc + (solid.shippingCost === '' ? 0 : solid.shippingCost) + (solid.costOfGoods === '' ? 0 : solid.costOfGoods) , 0);
-      const diskCost = micro.disks ? (micro.disks.shippingCost === '' ? 0 : micro.disks.shippingCost ) + (micro.disks.costOfGoods === '' ? 0 : micro.disks.costOfGoods) : 0;
+      const bareboneCost = calculateTotalCost(micro);
+      const processorCost = micro.processors ? calculateTotalCost(micro.processors) : 0;
+      const memoryCost = micro.memories?.reduce((acc, memory) => acc + calculateTotalCost(memory), 0);
+      const solidCost = micro.solids?.reduce((acc, solid) => acc + calculateTotalCost(solid), 0);
+      const diskCost = micro.disks ? calculateTotalCost(micro.disks) : 0;
 
       const totalCost = bareboneCost + processorCost + memoryCost + solidCost + diskCost;
       const profit = (micro.salesPrice + micro.shippingCollected) - totalCost;
+
+      return {
+        ...micro,
+        totalCost,
+        profit,
+      }
+    });
+  });
+
+  const purchasedMicros = computed(() => {
+    const micros = microRepo.query().where((micro) => micro.dop !== '' && micro.dop !== null).get();
+
+    return micros.map(micro => {
+      const totalCost = calculateTotalCost(micro);
+      const profit = calculateProfit(micro);
 
       return {
         ...micro,
@@ -129,7 +230,7 @@ export const useMicroStore = defineStore('micro', () => {
     // state
     brand, seriesBy, sortBy,
     // getters
-    availableMicros, soldMicros, filteredMicros, brands, brandCount, groups,
+    availableMicros, purchasedMicros, soldMicros, filteredMicros, brands, brandCount, groups,
     // actions
   }
 

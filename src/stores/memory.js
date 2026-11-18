@@ -18,19 +18,7 @@ export const useMemoryStore = defineStore('memory', () => {
     speed.value = newParams.category;
   });
 
-  const availableMemories = computed(() => {
-    const memories = memoryRepo.query().where('available', true).withAll().get();
-
-    return memories.map(memory => {
-      const totalCost = (memory.shippingCost === '' ? 0 : memory.shippingCost) + (memory.costOfGoods === '' ? 0 : memory.costOfGoods);
-      const profit = (memory.salesPrice + memory.shippingCollected) - totalCost;
-      return {
-        ...memory,
-        totalCost,
-        profit,
-      }
-    });
-  });
+  const availableMemories = computed(() => memoryRepo.query().where('available', true).withAll().get());
 
   const spareMemories = computed(() => {
     const filtered = memoryRepo.query().whereDoesntHave('micro').where('available', true).get();
@@ -66,34 +54,9 @@ export const useMemoryStore = defineStore('memory', () => {
     query.where('available', true);
   }).where('available', true).with('micro').get());
 
-  const soldMemories = computed(() => {
-    const memories = memoryRepo.query().where('available', false).withAll().get();
+  const soldMemories = computed(() => memoryRepo.query().where('available', false).withAll().get());
 
-    return memories.map(memory => {
-      const totalCost = (memory.shippingCost === '' ? 0 : memory.shippingCost) + (memory.costOfGoods === '' ? 0 : memory.costOfGoods);
-      const profit = (memory.salesPrice + memory.shippingCollected) - totalCost;
-      return {
-        ...memory,
-        totalCost,
-        profit,
-      }
-    });
-  });
-
-  const purchasedMemories = computed(() => {
-    const memories = memoryRepo.query().where((memory) => memory.dop !== '' && memory.dop !== null).with('micro').get();
-
-    return memories.map(memory => {
-      const totalExpenses = (memory.shippingCost === '' ? 0 : memory.shippingCost) + (memory.costOfGoods === '' ? 0 : memory.costOfGoods);
-      const profit = (memory.salesPrice || memory.subPrice + memory.shippingCollected) - totalExpenses;
-
-      return {
-        ...memory,
-        totalExpenses,
-        profit,
-      }
-    });
-  });
+  const purchasedMemories = computed(() => memoryRepo.query().where((memory) => memory.dop !== '' && memory.dop !== null).with('micro').get());
 
   const filteredMemories = computed(() => {
     let filtered = [];

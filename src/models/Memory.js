@@ -1,6 +1,5 @@
 import { Model } from 'pinia-orm'
 import Micro from './Micro'
-import { formatSize } from '../utils/format';
 
 export default class Memory extends Model {
 
@@ -25,13 +24,12 @@ export default class Memory extends Model {
       shippingCollected: this.attr(0),
       shippingCost: this.attr(0),
       costOfGoods: this.attr(0),
+      totalCost: this.attr(0),
+      profit: this.attr(0),
       category: this.attr('ram'),
+      text: this.attr(''),
       micro: this.belongsTo(Micro, 'microId')
     }
-  }
-
-  get text() {
-    return `${formatSize(this.capacity)} ${this.gen.toUpperCase()} ${this.speed}mhz ${this.brand}`;
   }
 
 }

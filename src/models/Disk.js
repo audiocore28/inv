@@ -1,6 +1,5 @@
 import { Model } from 'pinia-orm'
 import Micro from './Micro'
-import { formatSize } from '../utils/format';
 
 export default class Disk extends Model {
 
@@ -25,28 +24,13 @@ export default class Disk extends Model {
       shippingCollected: this.attr(0),
       shippingCost: this.attr(0),
       costOfGoods: this.attr(0),
+      totalCost: this.attr(0),
+      profit: this.attr(0),
       category: this.attr('hdd'),
+      desc: this.attr(''),
+      text: this.attr(''),
       micro: this.belongsTo(Micro, 'microId')
     }
-  }
-
-  get desc() {
-    return `${formatSize(this.capacity)} ${this.brand} ${this.model} : ${this.year} ${this.health > 0 ? `- ${this.health}%` : ''}`;
-  }
-
-  get text() {
-    return `
-${formatSize(this.capacity)} HDD ${this.form} inch ${this.brand} ${this.model} ${this.health > 0 ? `(${this.health}% health)` : ''};
-
-${formatSize(this.capacity)} Hard Disk Drive / HDD
-${this.form} inch 
-${this.brand} ${this.model}
-${this.rpm}rpm
-${this.health > 0 ? `${this.health}% health` : ''}
-${this.year}
-
-For Laptop / External Storage
-        `;
   }
 
 }

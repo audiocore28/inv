@@ -29,7 +29,7 @@ const componentMap = {
         <h2 class="text-slate-400 text-xs font-inter font-normal">{{ record.month }}</h2>
 
         <div class="flex justify-between items-center">
-          <span class="text-slate-400 text-xs font-inter font-semibold mr-1">{{ formattedAmount(record.expenses) }}</span>
+          <span class="text-slate-400 text-xs font-inter font-semibold mr-1">{{ formattedAmount(record.totalCost) }}</span>
         </div>
       </div>
 
@@ -46,7 +46,7 @@ const componentMap = {
 
 
       <div class="bg-slate-900 flex flex-wrap gap-4 justify-center mt-4">
-        <div v-for="item in record.items" class="relative bg-slate-800/70 rounded-lg flex-grow text-slate-300 w-full md:w-5/12 lg:w-3/12" >
+        <div v-for="item in record.items" class="relative bg-slate-800/70 rounded-lg p-1 flex-grow text-slate-300 w-full md:w-5/12 lg:w-3/12" >
           <component
             :is="componentMap[item.category]" 
             :item="item"
